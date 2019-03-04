@@ -147,6 +147,10 @@ public class JClass extends JLoadableNode {
 		return cls.getSourceLine(line);
 	}
 
+	public Integer getDeclarationLineOfMethodContainingStmtSourceLine(int stmtSourceLine) { return cls.getDeclarationLineOfMethodContainingSourceLine(stmtSourceLine); }
+
+	public String getClassNameOfMethodContainingSourceLine(int stmtSourceLine){ return cls.getClassNameOfMethodContainingSourceLine(stmtSourceLine); }
+
 	@Override
 	public int hashCode() {
 		return cls.hashCode();

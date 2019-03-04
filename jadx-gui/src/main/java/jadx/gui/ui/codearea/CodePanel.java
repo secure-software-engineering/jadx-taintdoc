@@ -1,6 +1,8 @@
 package jadx.gui.ui.codearea;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -34,6 +36,9 @@ public final class CodePanel extends ContentPanel {
 
 		KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK);
 		Utils.addKeyBinding(codeArea, key, "SearchAction", new SearchAction());
+
+		key = KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK);
+		Utils.addKeyBinding(codeArea, key, "MarkAction", new MarkAction());
 	}
 
 	private void initLineNumbers() {
@@ -62,6 +67,39 @@ public final class CodePanel extends ContentPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			searchBar.toggle();
+		}
+	}
+
+	private class MarkAction extends AbstractAction {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int x = codeArea.getCaretLineNumber() + 1;
+			Element statementElement = codeArea.getDocument().getDefaultRootElement().getElement(codeArea.getCaretLineNumber());
+			Element methodDeclarationElement = codeArea.getDocument().getDefaultRootElement().getElement(codeArea.getDeclarationLineOfMethodContainingStmtSourceLine(codeArea.getCaretLineNumber()) - 1);
+			String methodDeclaration = "";
+			String statement = "";
+			String className = codeArea.getClassNameOfMethodContainingSourceLine(codeArea.getCaretLineNumber() - 1);
+			try{
+				methodDeclaration = codeArea.getText(methodDeclarationElement.getStartOffset(), methodDeclarationElement.getEndOffset() - methodDeclarationElement.getStartOffset()).trim();
+			} catch (BadLocationException ex) {}
+
+			try{
+				statement = codeArea.getText(statementElement.getStartOffset(), statementElement.getEndOffset() - statementElement.getStartOffset()).trim();
+			} catch (BadLocationException ex) {}
+
+			//cut off throws if it is there
+			int i;
+			if((i = methodDeclaration.indexOf(" throws ")) >= 0)
+				methodDeclaration = methodDeclaration.substring(0, i);
+			//cut off { if it is there
+			if((i = methodDeclaration.indexOf(" {")) >= 0)
+				methodDeclaration = methodDeclaration.substring(0, i);
+			System.out.println("-------------");
+			System.out.println("\"statement\": \"" + statement + "\"");
+			System.out.println("\"methodName\": \"" + methodDeclaration + "\"");
+			System.out.println("\"className\": \"" + className + "\"");
+			System.out.println("\"lineNo\": " + codeArea.getSourceLine(x));
+			System.out.println("-------------");
 		}
 	}
 

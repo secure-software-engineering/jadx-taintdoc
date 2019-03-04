@@ -6,16 +6,15 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import jadx.core.dex.nodes.*;
 import org.jetbrains.annotations.Nullable;
 
 import jadx.core.codegen.CodeWriter;
 import jadx.core.dex.attributes.AFlag;
 import jadx.core.dex.attributes.nodes.LineAttrNode;
 import jadx.core.dex.info.AccessInfo;
-import jadx.core.dex.nodes.ClassNode;
-import jadx.core.dex.nodes.FieldNode;
-import jadx.core.dex.nodes.MethodNode;
 
 public final class JavaClass implements JavaNode {
 
@@ -195,6 +194,35 @@ public final class JavaClass implements JavaNode {
 	public Integer getSourceLine(int decompiledLine) {
 		decompile();
 		return cls.getCode().getLineMapping().get(decompiledLine);
+	}
+
+	public Integer getDeclarationLineOfMethodContainingSourceLine(int decompiledLine){
+		MethodNode closestMethod = getMethodNodeOfLine(decompiledLine);
+		if(closestMethod != null) {
+			return closestMethod.getDecompiledLine();
+		}
+		return null;
+	}
+
+	public String getClassNameOfMethodContainingSourceLine(int decompiledLine){
+		MethodNode closestMethod = getMethodNodeOfLine(decompiledLine);
+		if(closestMethod != null) {
+			return closestMethod.getParentClass().getFullName();
+		}
+		return null;
+	}
+
+	private MethodNode getMethodNodeOfLine(int decompiledLine){
+		int lastDiff = 1000000000;
+		MethodNode closestMethod = null;
+		for(MethodNode m: cls.getMethods()) {
+			int diff = decompiledLine - m.getDecompiledLine();
+			if (diff > 0 && diff < lastDiff) {
+				lastDiff = diff;
+				closestMethod = m;
+			}
+		}
+		return closestMethod;
 	}
 
 	@Override

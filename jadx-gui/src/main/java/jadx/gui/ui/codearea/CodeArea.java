@@ -158,6 +158,20 @@ public final class CodeArea extends RSyntaxTextArea {
 		return node.getSourceLine(line);
 	}
 
+	public Integer getDeclarationLineOfMethodContainingStmtSourceLine(int stmtSourceLine){
+		if (node instanceof JClass) {
+			return ((JClass) node).getDeclarationLineOfMethodContainingStmtSourceLine(stmtSourceLine);
+		}
+		return null;
+	}
+
+	public String getClassNameOfMethodContainingSourceLine(int stmtSourceLine){
+		if (node instanceof JClass) {
+			return ((JClass) node).getClassNameOfMethodContainingSourceLine(stmtSourceLine);
+		}
+		return null;
+	}
+
 	public void scrollToLine(int line) {
 		int lineNum = line - 1;
 		if (lineNum < 0) {
