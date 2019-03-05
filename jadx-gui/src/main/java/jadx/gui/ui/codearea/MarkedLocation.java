@@ -54,13 +54,6 @@ public class MarkedLocation {
         //cut off "{" if it is there
         if((i = methodName.indexOf(" {")) >= 0)
             methodName = methodName.substring(0, i);
-        System.out.println("-------------");
-        System.out.println("\"statement\": \"" + statement + "\"");
-        System.out.println("\"methodName\": \"" + methodName + "\"");
-        System.out.println("\"className\": \"" + className + "\"");
-        System.out.println("\"lineNo\": " + lineNo);
-        System.out.println("-------------");
-
     }
 
     /*
