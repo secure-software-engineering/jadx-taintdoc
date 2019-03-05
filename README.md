@@ -12,6 +12,16 @@ Command line and GUI tools for produce Java source code from Android Dex and Apk
 
 ![jadx-gui screenshot](https://i.imgur.com/h917IBZ.png)
 
+### Manual Analysis Documentation Documentation
+
+- F2 - mark/unmark currently focussed line as source
+- F3 - mark/unmark currently focussed line as intermediate flow
+- F4 - mark/unmark currently focussed line as sink
+
+- F5 - create and switch to new finding
+- F6 - navigate to previous finding
+- F7 - navigate to next finding
+
 
 ### Downloads
 - latest [unstable build: ![Download](https://api.bintray.com/packages/skylot/jadx/unstable/images/download.svg) ](https://bintray.com/skylot/jadx/unstable/_latestVersion#files)

@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
+import jadx.gui.taintdoc.TaintAnalysisReport;
 import jadx.gui.treemodel.JClass;
 import jadx.gui.treemodel.JNode;
 import jadx.gui.treemodel.JResource;
@@ -39,8 +40,23 @@ public final class CodePanel extends ContentPanel {
 		KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK);
 		Utils.addKeyBinding(codeArea, key, "SearchAction", new SearchAction());
 
-		key = KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK);
-		Utils.addKeyBinding(codeArea, key, "MarkAction", new MarkAction());
+		key = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0);
+		Utils.addKeyBinding(codeArea, key, "MarkSourceAction", new MarkSourceAction());
+
+		key = KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0);
+		Utils.addKeyBinding(codeArea, key, "MarkIntermediateAction", new MarkIntermediateAction());
+
+		key = KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0);
+		Utils.addKeyBinding(codeArea, key, "MarkSinkAction", new MarkSinkAction());
+
+		key = KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0);
+		Utils.addKeyBinding(codeArea, key, "NewFindingAction", new NewFindingAction());
+
+		key = KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0);
+		Utils.addKeyBinding(codeArea, key, "PreviousFindingAction", new PreviousFindingAction());
+
+		key = KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0);
+		Utils.addKeyBinding(codeArea, key, "NextFindingAction", new NextFindingAction());
 	}
 
 	private void initLineNumbers() {
@@ -72,10 +88,45 @@ public final class CodePanel extends ContentPanel {
 		}
 	}
 
-	private class MarkAction extends AbstractAction {
+	private class MarkSourceAction extends AbstractAction{
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(ActionEvent e){
+			TaintAnalysisReport.getInstance().markSource(codeArea);
+		}
+	}
 
+	private class MarkSinkAction extends AbstractAction{
+		@Override
+		public void actionPerformed(ActionEvent e){
+			TaintAnalysisReport.getInstance().markSink(codeArea);
+		}
+	}
+
+	private class MarkIntermediateAction extends AbstractAction{
+		@Override
+		public void actionPerformed(ActionEvent e){
+			TaintAnalysisReport.getInstance().markIntermediate(codeArea);
+		}
+	}
+
+	private class NewFindingAction extends AbstractAction{
+		@Override
+		public void actionPerformed(ActionEvent e){
+			TaintAnalysisReport.getInstance().createAndSwitchToNewFinding();
+		}
+	}
+
+	private class PreviousFindingAction extends AbstractAction{
+		@Override
+		public void actionPerformed(ActionEvent e){
+			TaintAnalysisReport.getInstance().previousFinding();
+		}
+	}
+
+	private class NextFindingAction extends AbstractAction{
+		@Override
+		public void actionPerformed(ActionEvent e){
+			TaintAnalysisReport.getInstance().nextFinding();
 		}
 	}
 

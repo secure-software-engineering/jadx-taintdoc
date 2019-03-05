@@ -2,12 +2,17 @@ package jadx.gui.taintdoc;
 
 import jadx.gui.ui.codearea.MarkedLocation;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class TaintAnalysisFinding {
     private MarkedLocation source;
     private MarkedLocation sink;
     private Set<MarkedLocation> intermediateFlows;
+
+    public TaintAnalysisFinding(){
+        intermediateFlows = new HashSet<MarkedLocation>();
+    }
 
     public void removeSource(){
         if(source != null){
@@ -24,16 +29,7 @@ public class TaintAnalysisFinding {
     }
 
     //(In)equality is weird. Probably I don't even have to iterate here since equals() is implemented ...?
-    public void removeIntermediate(MarkedLocation intermediate){
-        for(MarkedLocation l: intermediateFlows){
-            if(l.equals(intermediate)) {
-                intermediateFlows.remove(l);
-                break;
-            }
-        }
-    }
-
-    public boolean containsIntermediate(MarkedLocation intermediate){
+    public boolean containsIntermediateFlow(MarkedLocation intermediate){
         for(MarkedLocation l: intermediateFlows){
             if(l.equals(intermediate))
                 return true;
@@ -65,9 +61,29 @@ public class TaintAnalysisFinding {
     }
 
     public void removeIntermediateFlow(MarkedLocation intermediate){
-        if(intermediateFlows.contains(intermediate)){
-            intermediate.removeHighlight();
-            intermediateFlows.remove(intermediate);
+        for(MarkedLocation l: intermediateFlows){
+            if(l.equals(intermediate)){
+                l.removeHighlight();
+                intermediateFlows.remove(l);
+            }
         }
+    }
+
+    public void removeAllHighlights(){
+        if(source != null)
+            source.removeHighlight();
+        if(sink != null)
+            sink.removeHighlight();
+        for(MarkedLocation l: intermediateFlows)
+            l.removeHighlight();
+    }
+
+    public void showAllHighlights(){
+        if(source != null)
+            source.showHighlight();
+        if(sink != null)
+            sink.showHighlight();
+        for(MarkedLocation l: intermediateFlows)
+            l.showHighlight();
     }
 }
