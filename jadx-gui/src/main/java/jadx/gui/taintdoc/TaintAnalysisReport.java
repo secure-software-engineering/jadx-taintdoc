@@ -20,6 +20,7 @@ public class TaintAnalysisReport {
     private int currentFindingIndex;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private String apkFileName;
 
     private final Color sourceColor;
     private final Color sinkColor;
@@ -120,5 +121,9 @@ public class TaintAnalysisReport {
 
     public void setEndDate(){
         endDate = LocalDateTime.now();
+    }
+
+    public void setApkFileName(String filename){
+        apkFileName = filename;
     }
 }

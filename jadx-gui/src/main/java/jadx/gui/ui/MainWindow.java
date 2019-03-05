@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import jadx.gui.taintdoc.TaintAnalysisFinding;
 import jadx.gui.taintdoc.TaintAnalysisReport;
 import jadx.gui.ui.codearea.CodePanel;
 import org.fife.ui.rsyntaxtextarea.Theme;
@@ -186,6 +187,7 @@ public class MainWindow extends JFrame {
 		settings.addRecentFile(file.getAbsolutePath());
 		initTree();
 		setTitle(DEFAULT_TITLE + " - " + file.getName());
+		TaintAnalysisReport.getInstance().setApkFileName(file.getName());
 		runBackgroundJobs();
 	}
 
