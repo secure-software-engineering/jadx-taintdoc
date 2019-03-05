@@ -16,13 +16,25 @@ Command line and GUI tools for produce Java source code from Android Dex and Apk
 
 | Key | Operation |
 |-----|-----------|
-| F2 | mark/unmark currently focussed line as source |
-| F3 | mark/unmark currently focussed line as intermediate flow |
-| F4 | mark/unmark currently focussed line as sink |
-| F5 | create and switch to new finding |
-| F6 | navigate to previous finding |
-| F7 | navigate to next finding |
+| F2 | Mark/unmark currently focussed line as source |
+| F3 | Mark/unmark currently focussed line as intermediate flow |
+| F4 | Mark/unmark currently focussed line as sink |
+| F5 | Create and switch to new finding |
+| F6 | Navigate to previous finding |
+| F7 | Navigate to next finding |
+| Ctrl + Alt + F9 | Set start date to now |
+| Ctrl + Alt + F10 | Set end date to now |
 
+Process:
+
+- Open Jadx
+- Set start date to now (Ctrl + Alt + F9)
+- Add finding (F5)
+- Click a line to set focus
+- Mark focussed line as source/intermediate/sink (F2/F3/F4)
+- Click different line for next mark etc ...
+- When done with current finding, add next finding
+- When done with all findings, set end date to now (Ctrl + Alt + F10)
 
 ### Downloads
 - latest [unstable build: ![Download](https://api.bintray.com/packages/skylot/jadx/unstable/images/download.svg) ](https://bintray.com/skylot/jadx/unstable/_latestVersion#files)

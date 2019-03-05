@@ -15,12 +15,7 @@ import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -29,6 +24,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import jadx.gui.taintdoc.TaintAnalysisReport;
+import jadx.gui.ui.codearea.CodePanel;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -638,6 +635,26 @@ public class MainWindow extends JFrame {
 
 		setContentPane(mainPanel);
 		setTitle(DEFAULT_TITLE);
+
+		KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_F9, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
+		Utils.addKeyBinding(mainPanel, key, "SetStartDateAction", new MainWindow.SetStartDateAction());
+
+		key = KeyStroke.getKeyStroke(KeyEvent.VK_F10, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
+		Utils.addKeyBinding(mainPanel, key, "SetEndDateAction", new MainWindow.SetEndDateAction());
+	}
+
+	private class SetStartDateAction extends AbstractAction{
+		@Override
+		public void actionPerformed(ActionEvent e){
+			TaintAnalysisReport.getInstance().setStartDate();
+		}
+	}
+
+	private class SetEndDateAction extends AbstractAction{
+		@Override
+		public void actionPerformed(ActionEvent e){
+			TaintAnalysisReport.getInstance().setEndDate();
+		}
 	}
 
 	public void setLocationAndPosition() {

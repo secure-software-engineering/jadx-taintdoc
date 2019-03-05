@@ -4,7 +4,10 @@ import jadx.gui.ui.codearea.CodeArea;
 import jadx.gui.ui.codearea.MarkedLocation;
 
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Singleton for the manual analysis report. In essence this holds all attributes that are serialized to JSON
@@ -15,6 +18,8 @@ public class TaintAnalysisReport {
     private ArrayList<TaintAnalysisFinding> findings;
     private TaintAnalysisFinding currentFinding;
     private int currentFindingIndex;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 
     private final Color sourceColor;
     private final Color sinkColor;
@@ -107,5 +112,13 @@ public class TaintAnalysisReport {
         if(currentFinding != null)
             currentFinding.removeAllHighlights();
         currentFinding = finding;
+    }
+
+    public void setStartDate(){
+        startDate = LocalDateTime.now();
+    }
+
+    public void setEndDate(){
+        endDate = LocalDateTime.now();
     }
 }
