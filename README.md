@@ -14,13 +14,15 @@ Command line and GUI tools for produce Java source code from Android Dex and Apk
 
 ### Manual Analysis Documentation Documentation
 
-- F2 - mark/unmark currently focussed line as source
-- F3 - mark/unmark currently focussed line as intermediate flow
-- F4 - mark/unmark currently focussed line as sink
+| Key | Operation |
+|-----|-----------|
+| F2 | mark/unmark currently focussed line as source |
+| F3 | mark/unmark currently focussed line as intermediate flow |
+| F4 | mark/unmark currently focussed line as sink |
 
-- F5 - create and switch to new finding
-- F6 - navigate to previous finding
-- F7 - navigate to next finding
+| F5 | create and switch to new finding |
+| F6 | navigate to previous finding |
+| F7 | navigate to next finding |
 
 
 ### Downloads
