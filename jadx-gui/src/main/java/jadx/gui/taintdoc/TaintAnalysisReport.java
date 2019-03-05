@@ -1,30 +1,34 @@
 package jadx.gui.taintdoc;
 
+import com.google.gson.GsonBuilder;
 import jadx.gui.ui.codearea.CodeArea;
 import jadx.gui.ui.codearea.MarkedLocation;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
-import java.time.LocalDate;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Singleton for the manual analysis report. In essence this holds all attributes that are serialized to JSON
  * and furthermore provides the actions that are triggered by the key strokes.
  */
 public class TaintAnalysisReport {
-    private static TaintAnalysisReport instance;
+    private static transient TaintAnalysisReport instance;
+    private String fileName;
+    private String day;
     private ArrayList<TaintAnalysisFinding> findings;
-    private TaintAnalysisFinding currentFinding;
-    private int currentFindingIndex;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-    private String apkFileName;
+    private transient TaintAnalysisFinding currentFinding;
+    private transient int currentFindingIndex;
 
-    private final Color sourceColor;
-    private final Color sinkColor;
-    private final Color intermediateColor;
+    private transient final Color sourceColor;
+    private transient final Color sinkColor;
+    private transient final Color intermediateColor;
 
     private TaintAnalysisReport(){
         findings = new ArrayList<TaintAnalysisFinding>();
@@ -32,6 +36,7 @@ public class TaintAnalysisReport {
         sinkColor = new Color(0x1b, 0x89, 0x7f);
         intermediateColor = new Color(0xe4, 0xd9, 0x73);
         currentFindingIndex = -1;
+        day = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
     public static synchronized TaintAnalysisReport getInstance(){
@@ -115,15 +120,37 @@ public class TaintAnalysisReport {
         currentFinding = finding;
     }
 
-    public void setStartDate(){
-        startDate = LocalDateTime.now();
+    public void setFileName(String filename){
+        fileName = filename;
     }
 
-    public void setEndDate(){
-        endDate = LocalDateTime.now();
-    }
+    public void serializeToJson(){
+        String json = new GsonBuilder().setPrettyPrinting().create().toJson(this);
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.addChoosableFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                if(f.isDirectory())
+                    return true;
+                return f.getName().toLowerCase().endsWith(".json");
+            }
 
-    public void setApkFileName(String filename){
-        apkFileName = filename;
+            @Override
+            public String getDescription() {
+                return "JSON reports";
+            }
+        });
+        fileChooser.setMultiSelectionEnabled(false);
+        fileChooser.setDialogTitle("Save Analysis Report ...");
+        if(fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            try {
+                PrintWriter out = new PrintWriter(fileChooser.getSelectedFile());
+                out.print(json);
+                out.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

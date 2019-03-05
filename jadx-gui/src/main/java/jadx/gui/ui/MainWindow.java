@@ -24,9 +24,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import jadx.gui.taintdoc.TaintAnalysisFinding;
 import jadx.gui.taintdoc.TaintAnalysisReport;
-import jadx.gui.ui.codearea.CodePanel;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -187,7 +185,7 @@ public class MainWindow extends JFrame {
 		settings.addRecentFile(file.getAbsolutePath());
 		initTree();
 		setTitle(DEFAULT_TITLE + " - " + file.getName());
-		TaintAnalysisReport.getInstance().setApkFileName(file.getName());
+		TaintAnalysisReport.getInstance().setFileName(file.getName());
 		runBackgroundJobs();
 	}
 
@@ -260,6 +258,9 @@ public class MainWindow extends JFrame {
 		treeRoot.setFlatPackages(isFlattenPackage);
 		treeModel.setRoot(treeRoot);
 		reloadTree();
+
+		KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0);
+		Utils.addKeyBinding(tree, key, "SaveAction", new MainWindow.SaveAction());
 	}
 
 	private void reloadTree() {
@@ -638,24 +639,14 @@ public class MainWindow extends JFrame {
 		setContentPane(mainPanel);
 		setTitle(DEFAULT_TITLE);
 
-		KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_F9, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
-		Utils.addKeyBinding(mainPanel, key, "SetStartDateAction", new MainWindow.SetStartDateAction());
-
-		key = KeyStroke.getKeyStroke(KeyEvent.VK_F10, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
-		Utils.addKeyBinding(mainPanel, key, "SetEndDateAction", new MainWindow.SetEndDateAction());
+		KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0);
+		Utils.addKeyBinding(mainPanel, key, "SaveAction", new MainWindow.SaveAction());
 	}
 
-	private class SetStartDateAction extends AbstractAction{
+	private class SaveAction extends AbstractAction{
 		@Override
 		public void actionPerformed(ActionEvent e){
-			TaintAnalysisReport.getInstance().setStartDate();
-		}
-	}
-
-	private class SetEndDateAction extends AbstractAction{
-		@Override
-		public void actionPerformed(ActionEvent e){
-			TaintAnalysisReport.getInstance().setEndDate();
+			TaintAnalysisReport.getInstance().serializeToJson();
 		}
 	}
 

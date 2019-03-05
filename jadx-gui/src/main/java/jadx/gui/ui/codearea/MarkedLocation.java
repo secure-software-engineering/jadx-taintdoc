@@ -7,23 +7,23 @@ import javax.swing.text.Highlighter;
 import java.awt.*;
 
 public class MarkedLocation {
-    private final CodeArea codeArea;
-    private final Color markColor;
+    private transient final CodeArea codeArea;
+    private transient final Color markColor;
     private String statement;
     private String methodName;
     private String className;
-    private Integer sourceLine;
-    private Integer creationCaretLine;
-    private Object highlightTag;
+    private Integer lineNo;
+    private transient Integer creationCaretLine;
+    private transient Object highlightTag;
 
     public MarkedLocation(CodeArea codeArea, Color markColor){
         this.codeArea = codeArea;
         this.markColor = markColor;
 
         int caretLine = codeArea.getCaretLineNumber() + 1;
-        sourceLine = codeArea.getSourceLine(caretLine);
-        if(sourceLine == null)
-            sourceLine = -1;
+        lineNo = codeArea.getSourceLine(caretLine);
+        if(lineNo == null)
+            lineNo = -1;
         creationCaretLine = codeArea.getCaretLineNumber();
         Element statementElement = codeArea.getDocument().getDefaultRootElement().getElement(creationCaretLine);
         Element methodDeclarationElement = codeArea.getDocument()
@@ -58,7 +58,7 @@ public class MarkedLocation {
         System.out.println("\"statement\": \"" + statement + "\"");
         System.out.println("\"methodName\": \"" + methodName + "\"");
         System.out.println("\"className\": \"" + className + "\"");
-        System.out.println("\"lineNo\": " + sourceLine);
+        System.out.println("\"lineNo\": " + lineNo);
         System.out.println("-------------");
 
     }
@@ -97,6 +97,6 @@ public class MarkedLocation {
                 && this.statement.equals(((MarkedLocation) other).statement)
                 && this.methodName.equals(((MarkedLocation) other).methodName)
                 && this.className.equals(((MarkedLocation) other).className)
-                && this.sourceLine.equals(((MarkedLocation) other).sourceLine);
+                && this.lineNo.equals(((MarkedLocation) other).lineNo);
     }
 }

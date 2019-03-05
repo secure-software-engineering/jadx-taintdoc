@@ -57,6 +57,9 @@ public final class CodePanel extends ContentPanel {
 
 		key = KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0);
 		Utils.addKeyBinding(codeArea, key, "NextFindingAction", new NextFindingAction());
+
+		key = KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0);
+		Utils.addKeyBinding(codeArea, key, "SaveAction", new SaveAction());
 	}
 
 	private void initLineNumbers() {
@@ -127,6 +130,13 @@ public final class CodePanel extends ContentPanel {
 		@Override
 		public void actionPerformed(ActionEvent e){
 			TaintAnalysisReport.getInstance().nextFinding();
+		}
+	}
+
+	private class SaveAction extends AbstractAction{
+		@Override
+		public void actionPerformed(ActionEvent e){
+			TaintAnalysisReport.getInstance().serializeToJson();
 		}
 	}
 

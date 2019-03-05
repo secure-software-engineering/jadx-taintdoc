@@ -22,19 +22,18 @@ Command line and GUI tools for produce Java source code from Android Dex and Apk
 | F5 | Create and switch to new finding |
 | F6 | Navigate to previous finding |
 | F7 | Navigate to next finding |
-| Ctrl + Alt + F9 | Set start date to now |
-| Ctrl + Alt + F10 | Set end date to now |
+| F9 | Save report to file |
+
 
 Process:
 
-- Open Jadx
-- Set start date to now (Ctrl + Alt + F9)
+- Open apk file in Jadx
 - Add finding (F5)
 - Click a line to set focus
 - Mark focussed line as source/intermediate/sink (F2/F3/F4)
 - Click different line for next mark etc ...
 - When done with current finding, add next finding
-- When done with all findings, set end date to now (Ctrl + Alt + F10)
+- When done with all findings, save report (F9)
 
 ### Downloads
 - latest [unstable build: ![Download](https://api.bintray.com/packages/skylot/jadx/unstable/images/download.svg) ](https://bintray.com/skylot/jadx/unstable/_latestVersion#files)
