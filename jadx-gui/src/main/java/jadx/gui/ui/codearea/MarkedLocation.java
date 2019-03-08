@@ -25,13 +25,12 @@ public class MarkedLocation {
         if(lineNo == null)
             lineNo = -1;
         creationCaretLine = codeArea.getCaretLineNumber();
+        Integer methodDeclarationElementIndex = codeArea.getDeclarationLineOfMethodContainingStmtSourceLine(
+                codeArea.getCaretLineNumber()) - 1;
         Element statementElement = codeArea.getDocument().getDefaultRootElement().getElement(creationCaretLine);
         Element methodDeclarationElement = codeArea.getDocument()
                                             .getDefaultRootElement()
-                                            .getElement(
-                                                    codeArea.getDeclarationLineOfMethodContainingStmtSourceLine(
-                                                            codeArea.getCaretLineNumber()) - 1
-                                            );
+                                            .getElement(methodDeclarationElementIndex);
 
         className = codeArea.getClassNameOfMethodContainingSourceLine(codeArea.getCaretLineNumber() - 1);
         try{

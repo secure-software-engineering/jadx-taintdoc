@@ -212,6 +212,7 @@ public final class JavaClass implements JavaNode {
 		return null;
 	}
 
+	//A rather hacky approach to identify the method belonging to a line.
 	private MethodNode getMethodNodeOfLine(int decompiledLine){
 		int lastDiff = 1000000000;
 		MethodNode closestMethod = null;
@@ -220,6 +221,16 @@ public final class JavaClass implements JavaNode {
 			if (diff > 0 && diff < lastDiff) {
 				lastDiff = diff;
 				closestMethod = m;
+			}
+		}
+		//Also look in inner classes for something closer.
+		for(ClassNode c: cls.getInnerClasses()){
+			for(MethodNode m: c.getMethods()) {
+				int diff = decompiledLine - m.getDecompiledLine();
+				if (diff > 0 && diff < lastDiff) {
+					lastDiff = diff;
+					closestMethod = m;
+				}
 			}
 		}
 		return closestMethod;
