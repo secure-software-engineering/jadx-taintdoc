@@ -2,16 +2,17 @@ package jadx.gui.taintdoc;
 
 import jadx.gui.ui.codearea.MarkedLocation;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class TaintAnalysisFinding {
     private MarkedLocation source;
     private MarkedLocation sink;
-    private Set<MarkedLocation> intermediateFlows;
+    private List<MarkedLocation> intermediateFlows;
 
     public TaintAnalysisFinding(){
-        intermediateFlows = new HashSet<MarkedLocation>();
+        intermediateFlows = new ArrayList<MarkedLocation>();
     }
 
     public void removeSource(){
