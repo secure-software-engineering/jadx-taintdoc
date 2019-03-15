@@ -34,8 +34,8 @@ Shortcuts in Inspection Documentation window:
 | W | Move currently marked intermediate up |
 | S | Move currently marked intermediate down |
 
-Double-clicking Source/Intermediate/Sink navigates to the position in the main window
-Checkboxes set attribute for finding (serialized to JSON when saving)
+- Double-clicking Source/Intermediate/Sink navigates to the position in the main window
+- Checkboxes set attribute for finding (serialized to JSON when saving)
 
 
 Process:
