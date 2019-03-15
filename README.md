@@ -14,15 +14,28 @@ Command line and GUI tools for produce Java source code from Android Dex and Apk
 
 ### Manual Analysis Documentation Documentation
 
+Shortcuts in main window:
+
 | Key | Operation |
 |-----|-----------|
 | F2 | Mark/unmark currently focussed line as source |
 | F3 | Mark/unmark currently focussed line as intermediate flow |
 | F4 | Mark/unmark currently focussed line as sink |
 | F5 | Create and switch to new finding |
+| Ctrl + F5 | Delete current finding |
 | F6 | Navigate to previous finding |
 | F7 | Navigate to next finding |
 | F9 | Save report to file |
+
+Shortcuts in Inspection Documentation window:
+
+| Key | Operation |
+|-----|-----------|
+| W | Move currently marked intermediate up |
+| S | Move currently marked intermediate down |
+
+Double-clicking Source/Intermediate/Sink navigates to the position in the main window
+Checkboxes set attribute for finding (serialized to JSON when saving)
 
 
 Process:

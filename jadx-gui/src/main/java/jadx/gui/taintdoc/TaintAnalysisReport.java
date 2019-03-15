@@ -1,6 +1,8 @@
 package jadx.gui.taintdoc;
 
 import com.google.gson.GsonBuilder;
+import jadx.gui.treemodel.JNode;
+import jadx.gui.ui.ReportDialog;
 import jadx.gui.ui.codearea.CodeArea;
 import jadx.gui.ui.codearea.MarkedLocation;
 
@@ -13,6 +15,9 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Singleton for the manual analysis report. In essence this holds all attributes that are serialized to JSON
@@ -25,10 +30,13 @@ public class TaintAnalysisReport {
     private ArrayList<TaintAnalysisFinding> findings;
     private transient TaintAnalysisFinding currentFinding;
     private transient int currentFindingIndex;
+    private transient ReportDialog reportDialog;
 
     private transient final Color sourceColor;
     private transient final Color sinkColor;
     private transient final Color intermediateColor;
+
+    private transient static final Map<String, String> findingAttributesJsonKeyToDisplayNameMap = Collections.unmodifiableMap(createFindingAttributesJsonKeyToDisplayNameMap());
 
     private TaintAnalysisReport(){
         findings = new ArrayList<TaintAnalysisFinding>();
@@ -37,12 +45,43 @@ public class TaintAnalysisReport {
         intermediateColor = new Color(0xe4, 0xd9, 0x73);
         currentFindingIndex = -1;
         day = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        reportDialog = new ReportDialog();
+        reportDialog.setVisible(true);
     }
 
     public static synchronized TaintAnalysisReport getInstance(){
         if(instance == null)
             instance = new TaintAnalysisReport();
         return instance;
+    }
+
+    // I would have loved to initialize it directly....
+    private static HashMap<String, String> createFindingAttributesJsonKeyToDisplayNameMap(){
+        HashMap<String, String> result = new HashMap<>();
+        result.put("intraProcedural", "Intra-procedural");
+        result.put("interProcedural", "Inter-procedural");
+        result.put("fieldSensitive", "Field-sensitive");
+        result.put("flowSensitive", "Flow-sensitive");
+        result.put("contextSensitive", "Context-sensitive");
+        result.put("objectSensitive", "Object-sensitive");
+        result.put("pathSensitive", "Path-sensitive");
+        result.put("staticField", "Static Field");
+        result.put("array", "Array");
+        result.put("reflection", "Reflection");
+        result.put("exception", "Exception");
+        result.put("implicitflows", "Implicit Flows");
+        result.put("threading", "Threading");
+        result.put("lifecycle", "Lifecycle");
+        result.put("callbacks", "Callbacks");
+        result.put("interComponentCommunication", "Inter-Component Communication");
+        result.put("interAppCommunication", "Inter-App Communication");
+        result.put("emulatorDetection", "Emulator Detection");
+        result.put("collections", "Collections");
+        return result;
+    }
+
+    public static Map<String, String> getFindingAttributesJsonKeyToDisplayNameMap(){
+        return findingAttributesJsonKeyToDisplayNameMap;
     }
 
     /**
@@ -53,6 +92,11 @@ public class TaintAnalysisReport {
     public void markSource(CodeArea codeArea){
         assert(currentFindingIndex >= 0 && currentFinding != null);
         MarkedLocation markedLocation = new MarkedLocation(codeArea, sourceColor);
+        //if location is marked otherwise, remove the old mark
+        if(currentFinding.containsIntermediateFlow(markedLocation))
+            markIntermediate(codeArea);
+        if(currentFinding.getSink() != null && currentFinding.getSink().equals(markedLocation))
+            markSink(codeArea);
         if(currentFinding.getSource() != null && currentFinding.getSource().equals(markedLocation)) {
             currentFinding.getSource().removeHighlight();
             currentFinding.removeSource();
@@ -61,6 +105,8 @@ public class TaintAnalysisReport {
             currentFinding.setSource(markedLocation);
             markedLocation.showHighlight();
         }
+        reportDialog.updateFindings(findings);
+        reportDialog.updateMarkedSource(currentFinding.getSource());
     }
 
     /**
@@ -70,6 +116,11 @@ public class TaintAnalysisReport {
     public void markSink(CodeArea codeArea){
         assert(currentFindingIndex >= 0 && currentFinding != null);
         MarkedLocation markedLocation = new MarkedLocation(codeArea, sinkColor);
+        //if location is marked otherwise, remove the old mark
+        if(currentFinding.containsIntermediateFlow(markedLocation))
+            markIntermediate(codeArea);
+        if(currentFinding.getSource() != null && currentFinding.getSource().equals(markedLocation))
+            markSource(codeArea);
         if(currentFinding.getSink() != null && currentFinding.getSink().equals(markedLocation)) {
             currentFinding.getSink().removeHighlight();
             currentFinding.removeSink();
@@ -78,6 +129,7 @@ public class TaintAnalysisReport {
             currentFinding.setSink(markedLocation);
             markedLocation.showHighlight();
         }
+        reportDialog.updateMarkedSink(currentFinding.getSink());
     }
 
     /**
@@ -87,28 +139,49 @@ public class TaintAnalysisReport {
     public void markIntermediate(CodeArea codeArea){
         assert(currentFindingIndex >= 0 && currentFinding != null);
         MarkedLocation markedLocation = new MarkedLocation(codeArea, intermediateColor);
+        //if location is marked otherwise, remove the old mark
+        if(currentFinding.getSource() != null && currentFinding.getSource().equals(markedLocation))
+            markSource(codeArea);
+        if(currentFinding.getSink() != null && currentFinding.getSink().equals(markedLocation))
+            markSink(codeArea);
         if(currentFinding.containsIntermediateFlow(markedLocation)){
             currentFinding.removeIntermediateFlow(markedLocation);
         } else{
             currentFinding.addIntermediateFlow(markedLocation);
             markedLocation.showHighlight();
         }
+        reportDialog.updateMarkedIntermediates(currentFinding.getIntermediateFlows());
     }
 
-    public void selectCurrentFinding(int index){
-        assert(index < findings.size());
-        currentFinding.removeAllHighlights();
-        currentFindingIndex = index;
-        currentFinding = findings.get(currentFindingIndex);
-        currentFinding.showAllHighlights();
+    public void selectCurrentFinding(int index, boolean updateReportDialog){
+        if(index >= 0) {
+            assert (index < findings.size());
+            currentFinding.removeAllHighlights();
+            currentFindingIndex = index;
+            currentFinding = findings.get(currentFindingIndex);
+            currentFinding.showAllHighlights();
+            if (updateReportDialog)
+                reportDialog.selectCurrentFinding(index);
+            reportDialog.updateMarkedSource(currentFinding.getSource());
+            reportDialog.updateMarkedIntermediates(currentFinding.getIntermediateFlows());
+            reportDialog.updateMarkedSink(currentFinding.getSink());
+            reportDialog.updateAttributes(currentFinding.getAttributes());
+        }
+        else{
+            reportDialog.updateFindings(findings);
+            reportDialog.updateMarkedSource(null);
+            reportDialog.updateMarkedIntermediates(null);
+            reportDialog.updateMarkedSink(null);
+            reportDialog.updateAttributes(null);
+        }
     }
 
-    public void nextFinding(){
-        selectCurrentFinding((currentFindingIndex + 1) % findings.size());
+    public void nextFinding(boolean updateReportDialog){
+        selectCurrentFinding((currentFindingIndex + 1) % findings.size(), updateReportDialog);
     }
 
-    public void previousFinding(){
-        selectCurrentFinding((currentFindingIndex - 1 + findings.size()) % findings.size());
+    public void previousFinding(boolean updateReportDialog){
+        selectCurrentFinding((currentFindingIndex - 1 + findings.size()) % findings.size(), updateReportDialog);
     }
 
     public void createAndSwitchToNewFinding(){
@@ -118,6 +191,23 @@ public class TaintAnalysisReport {
         if(currentFinding != null)
             currentFinding.removeAllHighlights();
         currentFinding = finding;
+        reportDialog.updateFindings(findings);
+        selectCurrentFinding(currentFindingIndex, true);
+    }
+
+    public void removeCurrentFinding(){
+        if(currentFinding == null)
+            return;
+        currentFinding.removeAllHighlights();
+        findings.remove(currentFinding);
+        if(currentFindingIndex == findings.size())
+            currentFindingIndex -= 1;
+        if(currentFindingIndex >= 0)
+            currentFinding = findings.get(currentFindingIndex);
+        else
+            currentFinding = null;
+        reportDialog.updateFindings(findings);
+        selectCurrentFinding(currentFindingIndex, true);
     }
 
     public void setFileName(String filename){
@@ -152,5 +242,62 @@ public class TaintAnalysisReport {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void navigateToCurrentSource(){
+        currentFinding.getSource().navigateTo();
+    }
+
+    public void navigateToCurrentIntermediateByIndex(int index){
+        if(index < currentFinding.getIntermediateFlows().size())
+            currentFinding.getIntermediateFlows().get(index).navigateTo();
+    }
+
+    public void navigateToCurrentSink(){
+        currentFinding.getSink().navigateTo();
+    }
+
+    public void updateCodeAreasForNode(JNode node, CodeArea codeArea){
+        for(TaintAnalysisFinding f: findings){
+            if(f.getSource() != null) {
+                f.getSource().removeHighlight();
+                f.getSource().updateCodeAreaForNode(node, codeArea);
+            }
+            for(MarkedLocation intermediate: f.getIntermediateFlows()){
+                intermediate.removeHighlight();
+                intermediate.updateCodeAreaForNode(node, codeArea);
+            }
+            if(f.getSink() != null) {
+                f.getSink().removeHighlight();
+                f.getSink().updateCodeAreaForNode(node, codeArea);
+            }
+        }
+        if(currentFinding != null){
+            currentFinding.getSource().showHighlight();
+            for(MarkedLocation intermediate: currentFinding.getIntermediateFlows())
+                intermediate.showHighlight();
+            currentFinding.getSink().showHighlight();
+        }
+    }
+
+    public void moveUpIntermediateOfCurrent(int index){
+        if(index > 0) {
+            Collections.swap(currentFinding.getIntermediateFlows(), index, index - 1);
+            reportDialog.updateMarkedIntermediates(currentFinding.getIntermediateFlows());
+            reportDialog.focusIntermediate(index - 1);
+        }
+    }
+
+    public void moveDownIntermediateOfCurrent(int index){
+        if(index < currentFinding.getIntermediateFlows().size() - 1) {
+            Collections.swap(currentFinding.getIntermediateFlows(), index, index + 1);
+            reportDialog.updateMarkedIntermediates(currentFinding.getIntermediateFlows());
+            reportDialog.focusIntermediate(index + 1);
+        }
+    }
+
+    public void setAttributeOfCurrent(String key, boolean value){
+        if(currentFinding != null)
+            currentFinding.setAttribute(key, value);
     }
 }

@@ -52,6 +52,9 @@ public final class CodePanel extends ContentPanel {
 		key = KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0);
 		Utils.addKeyBinding(codeArea, key, "NewFindingAction", new NewFindingAction());
 
+		key = KeyStroke.getKeyStroke(KeyEvent.VK_F5, InputEvent.CTRL_DOWN_MASK);
+		Utils.addKeyBinding(codeArea, key, "RemoveFindingAction", new RemoveFindingAction());
+
 		key = KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0);
 		Utils.addKeyBinding(codeArea, key, "PreviousFindingAction", new PreviousFindingAction());
 
@@ -119,17 +122,22 @@ public final class CodePanel extends ContentPanel {
 		}
 	}
 
+	private class RemoveFindingAction extends AbstractAction{
+		@Override
+		public void actionPerformed(ActionEvent e) { TaintAnalysisReport.getInstance().removeCurrentFinding(); }
+	}
+
 	private class PreviousFindingAction extends AbstractAction{
 		@Override
 		public void actionPerformed(ActionEvent e){
-			TaintAnalysisReport.getInstance().previousFinding();
+			TaintAnalysisReport.getInstance().previousFinding(true);
 		}
 	}
 
 	private class NextFindingAction extends AbstractAction{
 		@Override
 		public void actionPerformed(ActionEvent e){
-			TaintAnalysisReport.getInstance().nextFinding();
+			TaintAnalysisReport.getInstance().nextFinding(true);
 		}
 	}
 

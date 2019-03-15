@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import jadx.gui.taintdoc.TaintAnalysisReport;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -177,7 +178,9 @@ public class TabbedPane extends JTabbedPane {
 		if (node instanceof JCertificate) {
 			return new CertificatePanel(this, node);
 		}
-		return new CodePanel(this, node);
+		CodePanel panel = new CodePanel(this, node);
+		TaintAnalysisReport.getInstance().updateCodeAreasForNode(node, panel.getCodeArea());
+		return panel;
 	}
 
 	@Nullable

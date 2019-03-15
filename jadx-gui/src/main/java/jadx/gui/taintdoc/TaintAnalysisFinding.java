@@ -3,16 +3,19 @@ package jadx.gui.taintdoc;
 import jadx.gui.ui.codearea.MarkedLocation;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 
 public class TaintAnalysisFinding {
     private MarkedLocation source;
     private MarkedLocation sink;
-    private List<MarkedLocation> intermediateFlows;
+    private ArrayList<MarkedLocation> intermediateFlows;
+    private Map<String, Boolean> attributes;
 
     public TaintAnalysisFinding(){
         intermediateFlows = new ArrayList<MarkedLocation>();
+        attributes = new TreeMap<>();
     }
 
     public void removeSource(){
@@ -46,6 +49,8 @@ public class TaintAnalysisFinding {
         return sink;
     }
 
+    public final ArrayList<MarkedLocation> getIntermediateFlows() { return intermediateFlows; }
+
     public void setSource(MarkedLocation source){
         assert(this.source == null);
         this.source = source;
@@ -62,12 +67,14 @@ public class TaintAnalysisFinding {
     }
 
     public void removeIntermediateFlow(MarkedLocation intermediate){
+        ArrayList<MarkedLocation> toRemove = new ArrayList<>();
         for(MarkedLocation l: intermediateFlows){
             if(l.equals(intermediate)){
                 l.removeHighlight();
-                intermediateFlows.remove(l);
+                toRemove.add(l);
             }
         }
+        intermediateFlows.removeAll(toRemove);
     }
 
     public void removeAllHighlights(){
@@ -86,5 +93,20 @@ public class TaintAnalysisFinding {
             sink.showHighlight();
         for(MarkedLocation l: intermediateFlows)
             l.showHighlight();
+    }
+
+    @Override
+    public String toString(){
+        if(source == null)
+            return "<no source>";
+        return source.toString();
+    }
+
+    public void setAttribute(String key, boolean value){
+        attributes.put(key, value);
+    }
+
+    public Map<String, Boolean> getAttributes(){
+        return attributes;
     }
 }

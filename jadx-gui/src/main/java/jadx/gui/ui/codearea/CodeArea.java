@@ -182,6 +182,10 @@ public final class CodeArea extends RSyntaxTextArea {
 		forceCurrentLineHighlightRepaint();
 	}
 
+	public void codeJump(int line){
+		contentPanel.getTabbedPane().codeJump(new JumpPosition(node, line));
+	}
+
 	public void centerCurrentLine() {
 		JViewport viewport = (JViewport) SwingUtilities.getAncestorOfClass(JViewport.class, this);
 		if (viewport == null) {
@@ -214,5 +218,9 @@ public final class CodeArea extends RSyntaxTextArea {
 		} catch (BadLocationException e) {
 			LOG.debug("Can't scroll to {}", line, e);
 		}
+	}
+
+	public boolean hasNode(JNode node){
+		return this.node.equals(node);
 	}
 }

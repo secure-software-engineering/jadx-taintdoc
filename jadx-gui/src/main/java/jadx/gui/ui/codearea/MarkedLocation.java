@@ -1,5 +1,7 @@
 package jadx.gui.ui.codearea;
 
+import jadx.gui.treemodel.JNode;
+
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Element;
@@ -7,7 +9,7 @@ import javax.swing.text.Highlighter;
 import java.awt.*;
 
 public class MarkedLocation {
-    private transient final CodeArea codeArea;
+    private transient CodeArea codeArea;
     private transient final Color markColor;
     private String statement;
     private String methodName;
@@ -90,5 +92,25 @@ public class MarkedLocation {
                 && this.methodName.equals(((MarkedLocation) other).methodName)
                 && this.className.equals(((MarkedLocation) other).className)
                 && this.lineNo.equals(((MarkedLocation) other).lineNo);
+    }
+
+    public Integer getLineNo(){
+        return lineNo;
+    }
+
+    @Override
+    public String toString(){
+        if(statement.length() > 80)
+            return statement.substring(0, 77) + "...";
+        return statement;
+    }
+
+    public void navigateTo(){
+        codeArea.codeJump(creationCaretLine + 1);
+    }
+
+    public void updateCodeAreaForNode(JNode node, CodeArea codeArea){
+        if(this.codeArea.hasNode(node))
+            this.codeArea = codeArea;
     }
 }
