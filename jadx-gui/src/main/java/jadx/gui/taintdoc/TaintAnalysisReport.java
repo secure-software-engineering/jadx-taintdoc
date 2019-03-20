@@ -77,6 +77,7 @@ public class TaintAnalysisReport {
         result.put("interAppCommunication", "Inter-App Communication");
         result.put("emulatorDetection", "Emulator Detection");
         result.put("collections", "Collections");
+        result.put("partialFlow", "Partial Flow");
         return result;
     }
 
@@ -215,7 +216,7 @@ public class TaintAnalysisReport {
     }
 
     public void serializeToJson(){
-        String json = new GsonBuilder().setPrettyPrinting().create().toJson(this);
+        String json = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(this);
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setAcceptAllFileFilterUsed(false);
         fileChooser.addChoosableFileFilter(new FileFilter() {
