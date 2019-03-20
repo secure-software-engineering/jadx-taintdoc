@@ -273,10 +273,12 @@ public class TaintAnalysisReport {
             }
         }
         if(currentFinding != null){
-            currentFinding.getSource().showHighlight();
+            if(currentFinding.getSource() != null)
+                currentFinding.getSource().showHighlight();
             for(MarkedLocation intermediate: currentFinding.getIntermediateFlows())
                 intermediate.showHighlight();
-            currentFinding.getSink().showHighlight();
+            if(currentFinding.getSink() != null)
+                currentFinding.getSink().showHighlight();
         }
     }
 
