@@ -2,9 +2,11 @@ package jadx.gui.taintdoc;
 
 import jadx.gui.ui.codearea.MarkedLocation;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Date;
 
 
 public class TaintAnalysisFinding {
@@ -12,10 +14,12 @@ public class TaintAnalysisFinding {
     private MarkedLocation sink;
     private ArrayList<MarkedLocation> intermediateFlows;
     private Map<String, Boolean> attributes;
+    private final String creationDate;
 
     public TaintAnalysisFinding(){
         intermediateFlows = new ArrayList<MarkedLocation>();
         attributes = new TreeMap<>();
+        creationDate = new SimpleDateFormat(" (HH:mm:ss)").format(new Date());
     }
 
     public void removeSource(){
@@ -98,8 +102,8 @@ public class TaintAnalysisFinding {
     @Override
     public String toString(){
         if(source == null)
-            return "<no source>";
-        return source.toString();
+            return "<no source>" + creationDate;
+        return source.toString() + creationDate;
     }
 
     public void setAttribute(String key, boolean value){
