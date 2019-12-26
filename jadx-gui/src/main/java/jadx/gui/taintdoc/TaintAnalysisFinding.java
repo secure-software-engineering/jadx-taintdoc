@@ -13,13 +13,13 @@ public class TaintAnalysisFinding {
     private MarkedLocation source;
     private MarkedLocation sink;
     private ArrayList<MarkedLocation> intermediateFlows;
+    private String description;
+
     private Map<String, Boolean> attributes;
-    private final String creationDate;
 
     public TaintAnalysisFinding(){
         intermediateFlows = new ArrayList<MarkedLocation>();
         attributes = new TreeMap<>();
-        creationDate = new SimpleDateFormat(" (HH:mm:ss)").format(new Date());
     }
 
     public void removeSource(){
@@ -65,6 +65,11 @@ public class TaintAnalysisFinding {
         this.sink = sink;
     }
 
+    public void setDescription(String description)
+    {
+        assert (this.description==null);
+        this.description=description;
+    }
     public void addIntermediateFlow(MarkedLocation intermediate){
         assert(!intermediateFlows.contains(intermediate));
         intermediateFlows.add(intermediate);
@@ -102,8 +107,8 @@ public class TaintAnalysisFinding {
     @Override
     public String toString(){
         if(source == null)
-            return "<no source>" + creationDate;
-        return source.toString() + creationDate;
+            return "<no source>";
+        return source.toString();
     }
 
     public void setAttribute(String key, boolean value){
@@ -112,5 +117,10 @@ public class TaintAnalysisFinding {
 
     public Map<String, Boolean> getAttributes(){
         return attributes;
+    }
+
+    public String getDescription()
+    {
+        return this.description;
     }
 }

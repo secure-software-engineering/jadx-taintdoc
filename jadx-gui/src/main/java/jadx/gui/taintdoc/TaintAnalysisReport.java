@@ -26,7 +26,6 @@ import java.util.Map;
 public class TaintAnalysisReport {
     private static transient TaintAnalysisReport instance;
     private String fileName;
-    private String day;
     private ArrayList<TaintAnalysisFinding> findings;
     private transient TaintAnalysisFinding currentFinding;
     private transient int currentFindingIndex;
@@ -44,7 +43,6 @@ public class TaintAnalysisReport {
         sinkColor = new Color(0x1b, 0x89, 0x7f);
         intermediateColor = new Color(0xe4, 0xd9, 0x73);
         currentFindingIndex = -1;
-        day = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         reportDialog = new ReportDialog();
         reportDialog.setVisible(true);
     }
@@ -60,22 +58,14 @@ public class TaintAnalysisReport {
         HashMap<String, String> result = new HashMap<>();
         result.put("intraProcedural", "Intra-procedural");
         result.put("interProcedural", "Inter-procedural");
-        result.put("fieldSensitive", "Field-sensitive");
-        result.put("flowSensitive", "Flow-sensitive");
-        result.put("contextSensitive", "Context-sensitive");
-        result.put("objectSensitive", "Object-sensitive");
-        result.put("pathSensitive", "Path-sensitive");
         result.put("staticField", "Static Field");
         result.put("array", "Array");
         result.put("reflection", "Reflection");
         result.put("exception", "Exception");
-        result.put("implicitflows", "Implicit Flows");
         result.put("threading", "Threading");
-        result.put("lifecycle", "Lifecycle");
         result.put("callbacks", "Callbacks");
         result.put("interComponentCommunication", "Inter-Component Communication");
         result.put("interAppCommunication", "Inter-App Communication");
-        result.put("emulatorDetection", "Emulator Detection");
         result.put("collections", "Collections");
         result.put("partialFlow", "Partial Flow");
         return result;
@@ -167,6 +157,7 @@ public class TaintAnalysisReport {
             reportDialog.updateMarkedIntermediates(currentFinding.getIntermediateFlows());
             reportDialog.updateMarkedSink(currentFinding.getSink());
             reportDialog.updateAttributes(currentFinding.getAttributes());
+            reportDialog.updateDescription(currentFinding.getDescription());
         }
         else{
             reportDialog.updateFindings(findings);
@@ -174,6 +165,7 @@ public class TaintAnalysisReport {
             reportDialog.updateMarkedIntermediates(null);
             reportDialog.updateMarkedSink(null);
             reportDialog.updateAttributes(null);
+            reportDialog.updateDescription(null);
         }
     }
 
@@ -186,6 +178,9 @@ public class TaintAnalysisReport {
     }
 
     public void createAndSwitchToNewFinding(){
+        String description= this.reportDialog.getDescription();
+        if(currentFinding!=null)
+                currentFinding.setDescription(description);
         TaintAnalysisFinding finding = new TaintAnalysisFinding();
         currentFindingIndex = findings.size();
         findings.add(findings.size(), finding);
@@ -216,6 +211,9 @@ public class TaintAnalysisReport {
     }
 
     public void serializeToJson(){
+        String description= this.reportDialog.getDescription();
+        if(currentFinding!=null)
+            currentFinding.setDescription(description);
         String json = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(this);
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setAcceptAllFileFilterUsed(false);
@@ -303,4 +301,5 @@ public class TaintAnalysisReport {
         if(currentFinding != null)
             currentFinding.setAttribute(key, value);
     }
+
 }

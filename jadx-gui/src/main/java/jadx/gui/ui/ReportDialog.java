@@ -18,6 +18,7 @@ public class ReportDialog extends JDialog {
     private final DefaultListModel<String> intermediatesListModel;
     private Map<String, JCheckBox> findingAttributesCheckboxMap;
     private Map<JCheckBox, String> findingCheckboxAttributesMap;
+    private final JTextArea description;
 
     public ReportDialog(){
         findingComboBox = new JComboBox<>();
@@ -27,6 +28,7 @@ public class ReportDialog extends JDialog {
         intermediatesListModel = new DefaultListModel<>();
         findingAttributesCheckboxMap = new TreeMap<>();
         findingCheckboxAttributesMap = new HashMap<>();
+        description = new JTextArea();
         initCheckboxMap();
         initUI();
     }
@@ -107,6 +109,13 @@ public class ReportDialog extends JDialog {
         markedSinkText.setPreferredSize(new Dimension(480, 20));
         markedSinkText.setEditable(false);
         markedSinkText.setFocusable(false);
+        description.setEditable(true);
+        description.setLineWrap(true);
+        description.setWrapStyleWord(true);
+        JScrollPane areaScrollPane = new JScrollPane(description);
+        areaScrollPane.setVerticalScrollBarPolicy(
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        areaScrollPane.setPreferredSize(new Dimension(480, 80));
 
         JScrollPane listScroller = new JScrollPane(markedIntermediatesList);
         listScroller.setPreferredSize(new Dimension(480, 420));
@@ -124,6 +133,8 @@ public class ReportDialog extends JDialog {
         centerPanel.add(new JLabel("Intermediates: "), constraints);
         constraints.gridy = 3;
         centerPanel.add(new JLabel("Sink: "), constraints);
+        constraints.gridy = 4;
+        centerPanel.add(new JLabel("Description: "),constraints);
 
         constraints.gridx = 1;
         constraints.gridy = 0;
@@ -134,6 +145,8 @@ public class ReportDialog extends JDialog {
         centerPanel.add(listScroller, constraints);
         constraints.gridy = 3;
         centerPanel.add(markedSinkText, constraints);
+        constraints.gridy=4;
+        centerPanel.add(areaScrollPane,constraints);
 
         constraints.gridy = 0;
         constraints.gridx = 2;
@@ -185,6 +198,15 @@ public class ReportDialog extends JDialog {
         markedSinkText.setCaretPosition(0);
     }
 
+    public void updateDescription(String des)
+    {
+        if(description!=null)
+            description.setText(des);
+        else
+            description.setText("");
+        description.setCaretPosition(0);
+    }
+
     public void selectCurrentFinding(int index){
         findingComboBox.setSelectedIndex(index);
     }
@@ -200,5 +222,10 @@ public class ReportDialog extends JDialog {
             else
                 findingAttributesCheckboxMap.get(key).setSelected(false);
         }
+    }
+
+    public String getDescription()
+    {
+        return this.description.getText();
     }
 }
