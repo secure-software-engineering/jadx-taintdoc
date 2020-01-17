@@ -56,8 +56,8 @@ public class TaintAnalysisReport {
     // I would have loved to initialize it directly....
     private static HashMap<String, String> createFindingAttributesJsonKeyToDisplayNameMap(){
         HashMap<String, String> result = new HashMap<>();
-        result.put("intraProcedural", "Intra-procedural");
-        result.put("interProcedural", "Inter-procedural");
+        result.put("nonStaticField", "Non-static Field");
+        result.put("payload", "Payload");
         result.put("staticField", "Static Field");
         result.put("array", "Array");
         result.put("reflection", "Reflection");
@@ -68,6 +68,10 @@ public class TaintAnalysisReport {
         result.put("interAppCommunication", "Inter-App Communication");
         result.put("collections", "Collections");
         result.put("partialFlow", "Partial Flow");
+        result.put("lifecycle", "Lifecycle");
+        result.put("pathConstraints", "Path Constraints");
+        result.put("implicitFlows", "Implicit Flows");
+        result.put("appendToString", "Append To String");
         return result;
     }
 
