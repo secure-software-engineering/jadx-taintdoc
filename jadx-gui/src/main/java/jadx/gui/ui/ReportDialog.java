@@ -5,15 +5,23 @@ import jadx.gui.taintdoc.TaintAnalysisReport;
 import jadx.gui.ui.codearea.MarkedLocation;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 
 public class ReportDialog extends JDialog {
     private final JComboBox<String> findingComboBox;
     private final JTextField markedSourceText;
+    private final JTextField markedSourceTargetNameText;
+    private final JTextField markedSourceTargetNoText;
     private final JList markedIntermediatesList;
     private final JTextField markedSinkText;
+    private final JTextField markedSinkTargetNameText;
+    private final JTextField markedSinkTargetNoText;
     private boolean inUpdate;
     private final DefaultListModel<String> intermediatesListModel;
     private Map<String, JCheckBox> findingAttributesCheckboxMap;
@@ -23,8 +31,12 @@ public class ReportDialog extends JDialog {
     public ReportDialog(){
         findingComboBox = new JComboBox<>();
         markedSourceText = new JTextField();
+        markedSourceTargetNameText = new JTextField();
+        markedSourceTargetNoText = new JTextField();
         markedIntermediatesList = new JList();
         markedSinkText = new JTextField();
+        markedSinkTargetNameText = new JTextField();
+        markedSinkTargetNoText = new JTextField();
         intermediatesListModel = new DefaultListModel<>();
         findingAttributesCheckboxMap = new TreeMap<>();
         findingCheckboxAttributesMap = new HashMap<>();
@@ -103,6 +115,58 @@ public class ReportDialog extends JDialog {
             }
         });
 
+        markedSourceTargetNameText.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                if(!markedSourceText.getText().contains(markedSourceTargetNameText.getText()))
+                    markedSourceTargetNameText.setBackground(Color.yellow);
+                else
+                    markedSourceTargetNameText.setBackground(Color.white);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                if(!markedSourceText.getText().contains(markedSourceTargetNameText.getText()))
+                    markedSourceTargetNameText.setBackground(Color.yellow);
+                else
+                    markedSourceTargetNameText.setBackground(Color.white);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                if(!markedSourceText.getText().contains(markedSourceTargetNameText.getText()))
+                    markedSourceTargetNameText.setBackground(Color.yellow);
+                else
+                    markedSourceTargetNameText.setBackground(Color.white);
+            }
+        });
+
+        markedSinkTargetNameText.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                if(!markedSinkText.getText().contains(markedSinkTargetNameText.getText()))
+                    markedSinkTargetNameText.setBackground(Color.yellow);
+                else
+                    markedSinkTargetNameText.setBackground(Color.white);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                if(!markedSinkText.getText().contains(markedSinkTargetNameText.getText()))
+                    markedSinkTargetNameText.setBackground(Color.yellow);
+                else
+                    markedSinkTargetNameText.setBackground(Color.white);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                if(!markedSinkText.getText().contains(markedSinkTargetNameText.getText()))
+                    markedSinkTargetNameText.setBackground(Color.yellow);
+                else
+                    markedSinkTargetNameText.setBackground(Color.white);
+            }
+        });
+
         markedSourceText.setPreferredSize(new Dimension(480, 20));
         markedSourceText.setEditable(false);
         markedSourceText.setFocusable(false);
@@ -130,11 +194,19 @@ public class ReportDialog extends JDialog {
         constraints.gridy = 1;
         centerPanel.add(new JLabel("Source: "), constraints);
         constraints.gridy = 2;
-        centerPanel.add(new JLabel("Intermediates: "), constraints);
+        centerPanel.add(new JLabel("Target Name: "), constraints);
         constraints.gridy = 3;
-        centerPanel.add(new JLabel("Sink: "), constraints);
+        centerPanel.add(new JLabel("Target No: "), constraints);
         constraints.gridy = 4;
-        centerPanel.add(new JLabel("Description: "),constraints);
+        centerPanel.add(new JLabel("Intermediates: "), constraints);
+        constraints.gridy = 5;
+        centerPanel.add(new JLabel("Sink: "), constraints);
+        constraints.gridy = 6;
+        centerPanel.add(new JLabel("Target Name: "), constraints);
+        constraints.gridy = 7;
+        centerPanel.add(new JLabel("Target No: "), constraints);
+        constraints.gridy = 8;
+        centerPanel.add(new JLabel("Description: "), constraints);
 
         constraints.gridx = 1;
         constraints.gridy = 0;
@@ -142,15 +214,23 @@ public class ReportDialog extends JDialog {
         constraints.gridy = 1;
         centerPanel.add(markedSourceText, constraints);
         constraints.gridy = 2;
-        centerPanel.add(listScroller, constraints);
+        centerPanel.add(markedSourceTargetNameText, constraints);
         constraints.gridy = 3;
+        centerPanel.add(markedSourceTargetNoText, constraints);
+        constraints.gridy = 4;
+        centerPanel.add(listScroller, constraints);
+        constraints.gridy = 5;
         centerPanel.add(markedSinkText, constraints);
-        constraints.gridy=4;
-        centerPanel.add(areaScrollPane,constraints);
+        constraints.gridy = 6;
+        centerPanel.add(markedSinkTargetNameText, constraints);
+        constraints.gridy = 7;
+        centerPanel.add(markedSinkTargetNoText, constraints);
+        constraints.gridy = 8;
+        centerPanel.add(areaScrollPane, constraints);
 
         constraints.gridy = 0;
         constraints.gridx = 2;
-        constraints.gridheight = 4;
+        constraints.gridheight = 6;
         centerPanel.add(checkboxPane, constraints);
         getContentPane().add(centerPanel, BorderLayout.CENTER);
         setTitle("Inspection Documentation");
@@ -178,6 +258,8 @@ public class ReportDialog extends JDialog {
         else
             markedSourceText.setText("");
         markedSourceText.setCaretPosition(0);
+        markedSourceTargetNameText.setText(source.getTargetName());
+        markedSourceTargetNoText.setText(source.getTargetNo().toString());
     }
 
     public void updateMarkedIntermediates(ArrayList<MarkedLocation> intermediates){
@@ -196,11 +278,13 @@ public class ReportDialog extends JDialog {
         else
             markedSinkText.setText("");
         markedSinkText.setCaretPosition(0);
+        markedSinkTargetNameText.setText(sink.getTargetName());
+        markedSinkTargetNoText.setText(sink.getTargetNo().toString());
     }
 
     public void updateDescription(String des)
     {
-        if(description!=null)
+        if(des != null)
             description.setText(des);
         else
             description.setText("");
@@ -228,4 +312,37 @@ public class ReportDialog extends JDialog {
     {
         return this.description.getText();
     }
+
+    public String getSourceTargetName(){
+        return this.markedSourceTargetNameText.getText();
+    }
+
+    public Integer getSourceTargetNo(){
+        return Integer.parseInt(this.markedSourceTargetNoText.getText());
+    }
+
+    public String getSinkTargetName(){
+        return this.markedSinkTargetNameText.getText();
+    }
+
+    public Integer getSinkTargetNo(){
+        return Integer.parseInt(this.markedSinkTargetNoText.getText());
+    }
+
+    public void updateSourceTargetName(String name){
+        this.markedSourceTargetNameText.setText(name);
+    }
+
+    public void updateSourceTargetNo(Integer no){
+        this.markedSourceTargetNoText.setText(no.toString());
+    }
+
+    public void updateSinkTargetName(String name){
+        this.markedSinkTargetNameText.setText(name);
+    }
+
+    public void updateSinkTargetNo(Integer no){
+        this.markedSinkTargetNoText.setText(no.toString());
+    }
+
 }

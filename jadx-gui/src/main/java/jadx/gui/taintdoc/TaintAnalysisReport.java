@@ -151,6 +151,17 @@ public class TaintAnalysisReport {
     public void selectCurrentFinding(int index, boolean updateReportDialog){
         if(index >= 0) {
             assert (index < findings.size());
+            if(index == currentFindingIndex) {
+                if (updateReportDialog)
+                    reportDialog.selectCurrentFinding(index);
+                return;
+            }
+            //Need to update the editable GUI elements in the previously selected finding.
+            currentFinding.setDescription(reportDialog.getDescription());
+            currentFinding.setSourceTargetName(reportDialog.getSourceTargetName());
+            currentFinding.setSourceTargetNo(reportDialog.getSourceTargetNo());
+            currentFinding.setSinkTargetName(reportDialog.getSinkTargetName());
+            currentFinding.setSinkTargetNo(reportDialog.getSinkTargetNo());
             currentFinding.removeAllHighlights();
             currentFindingIndex = index;
             currentFinding = findings.get(currentFindingIndex);
@@ -162,6 +173,10 @@ public class TaintAnalysisReport {
             reportDialog.updateMarkedSink(currentFinding.getSink());
             reportDialog.updateAttributes(currentFinding.getAttributes());
             reportDialog.updateDescription(currentFinding.getDescription());
+            reportDialog.updateSourceTargetName(currentFinding.getSourceTargetName());
+            reportDialog.updateSourceTargetNo(currentFinding.getSourceTargetNo());
+            reportDialog.updateSinkTargetName(currentFinding.getSinkTargetName());
+            reportDialog.updateSinkTargetNo(currentFinding.getSinkTargetNo());
         }
         else{
             reportDialog.updateFindings(findings);
@@ -182,8 +197,8 @@ public class TaintAnalysisReport {
     }
 
     public void createAndSwitchToNewFinding(){
-        String description= this.reportDialog.getDescription();
-        if(currentFinding!=null)
+        String description = this.reportDialog.getDescription();
+        if(currentFinding != null)
                 currentFinding.setDescription(description);
         TaintAnalysisFinding finding = new TaintAnalysisFinding();
         currentFindingIndex = findings.size();

@@ -67,8 +67,7 @@ public class TaintAnalysisFinding {
 
     public void setDescription(String description)
     {
-        assert (this.description==null);
-        this.description=description;
+        this.description = description;
     }
     public void addIntermediateFlow(MarkedLocation intermediate){
         assert(!intermediateFlows.contains(intermediate));
@@ -122,5 +121,37 @@ public class TaintAnalysisFinding {
     public String getDescription()
     {
         return this.description;
+    }
+
+    public void setSourceTargetName(String name){
+        source.setTargetName(name);
+    }
+
+    public void setSourceTargetNo(Integer no){
+        source.setTargetNo(no);
+    }
+
+    public void setSinkTargetName(String name){
+        sink.setTargetName(name);
+    }
+
+    public void setSinkTargetNo(Integer no){
+        sink.setTargetNo(no);
+    }
+
+    public String getSourceTargetName(){
+        return source.getTargetName();
+    }
+
+    public Integer getSourceTargetNo(){
+        return source.getTargetNo();
+    }
+
+    public String getSinkTargetName(){
+        return sink.getTargetName();
+    }
+
+    public Integer getSinkTargetNo(){
+        return sink.getTargetNo();
     }
 }
