@@ -36,7 +36,8 @@ Shortcuts in Inspection Documentation window:
 
 - Double-clicking Source/Intermediate/Sink navigates to the position in the main window
 - Checkboxes set attribute for finding (serialized to JSON when saving)
-
+- Target names can be entered into the respective input field. The field is marked yellow if the target name is not a substring of the respective source line.
+- Custom attributes can be added below the predefined attribute checkboxes, one per line
 
 Process:
 
