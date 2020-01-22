@@ -27,6 +27,7 @@ public class ReportDialog extends JDialog {
     private Map<String, JCheckBox> findingAttributesCheckboxMap;
     private Map<JCheckBox, String> findingCheckboxAttributesMap;
     private final JTextArea description;
+    private final JTextArea customAttributes;
 
     public ReportDialog(){
         findingComboBox = new JComboBox<>();
@@ -41,6 +42,7 @@ public class ReportDialog extends JDialog {
         findingAttributesCheckboxMap = new TreeMap<>();
         findingCheckboxAttributesMap = new HashMap<>();
         description = new JTextArea();
+        customAttributes = new JTextArea();
         initCheckboxMap();
         initUI();
     }
@@ -176,10 +178,16 @@ public class ReportDialog extends JDialog {
         description.setEditable(true);
         description.setLineWrap(true);
         description.setWrapStyleWord(true);
-        JScrollPane areaScrollPane = new JScrollPane(description);
-        areaScrollPane.setVerticalScrollBarPolicy(
+        JScrollPane descriptionScrollPane = new JScrollPane(description);
+        descriptionScrollPane.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        areaScrollPane.setPreferredSize(new Dimension(480, 80));
+        descriptionScrollPane.setPreferredSize(new Dimension(480, 80));
+        customAttributes.setEditable(true);
+        customAttributes.setLineWrap(false);
+        JScrollPane customAttributesScrollPane = new JScrollPane(customAttributes);
+        customAttributesScrollPane.setVerticalScrollBarPolicy(
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        customAttributesScrollPane.setPreferredSize(new Dimension(100, 80));
 
         JScrollPane listScroller = new JScrollPane(markedIntermediatesList);
         listScroller.setPreferredSize(new Dimension(480, 420));
@@ -226,12 +234,18 @@ public class ReportDialog extends JDialog {
         constraints.gridy = 7;
         centerPanel.add(markedSinkTargetNoText, constraints);
         constraints.gridy = 8;
-        centerPanel.add(areaScrollPane, constraints);
+        centerPanel.add(descriptionScrollPane, constraints);
+
+        JPanel attributesPanel = new JPanel();
+        attributesPanel.setLayout(new BorderLayout());
+        attributesPanel.add(checkboxPane, BorderLayout.CENTER);
+        attributesPanel.add(customAttributesScrollPane, BorderLayout.PAGE_END);
 
         constraints.gridy = 0;
         constraints.gridx = 2;
         constraints.gridheight = 6;
-        centerPanel.add(checkboxPane, constraints);
+        centerPanel.add(attributesPanel, constraints);
+
         getContentPane().add(centerPanel, BorderLayout.CENTER);
         setTitle("Inspection Documentation");
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -345,4 +359,26 @@ public class ReportDialog extends JDialog {
         this.markedSinkTargetNoText.setText(no.toString());
     }
 
+    public ArrayList<String> getCustomAttributes(){
+        ArrayList<String> result = new ArrayList<>();
+        for(String attr: customAttributes.getText().split("\\n"))
+            if(!attr.equals(""))
+                result.add(attr);
+        return result;
+    }
+
+    public void setCustomAttributes(Map<String, Boolean> attributes, Map<String, String> nonCustomAttributes){
+        StringBuilder sb = new StringBuilder();
+        for(String attr: attributes.keySet()) {
+            if(!nonCustomAttributes.keySet().contains(attr) && attributes.get(attr)) {
+                sb.append(attr);
+                sb.append("\n");
+            }
+        }
+        customAttributes.setText(sb.toString());
+    }
+
+    public void clearCustomAttributes(){
+        customAttributes.setText("");
+    }
 }

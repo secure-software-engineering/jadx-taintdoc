@@ -124,34 +124,54 @@ public class TaintAnalysisFinding {
     }
 
     public void setSourceTargetName(String name){
-        source.setTargetName(name);
+        if(source != null)
+            source.setTargetName(name);
     }
 
     public void setSourceTargetNo(Integer no){
-        source.setTargetNo(no);
+        if(source != null)
+            source.setTargetNo(no);
     }
 
     public void setSinkTargetName(String name){
-        sink.setTargetName(name);
+        if(sink != null)
+            sink.setTargetName(name);
     }
 
     public void setSinkTargetNo(Integer no){
-        sink.setTargetNo(no);
+        if(sink != null)
+            sink.setTargetNo(no);
     }
 
     public String getSourceTargetName(){
-        return source.getTargetName();
+        if(source != null)
+            return source.getTargetName();
+        return "";
     }
 
     public Integer getSourceTargetNo(){
-        return source.getTargetNo();
+        if(source != null)
+            return source.getTargetNo();
+        return -1;
     }
 
     public String getSinkTargetName(){
-        return sink.getTargetName();
+        if(sink != null)
+            return sink.getTargetName();
+        return "";
     }
 
     public Integer getSinkTargetNo(){
-        return sink.getTargetNo();
+        if(sink != null)
+            return sink.getTargetNo();
+        return -1;
+    }
+
+    public void setCustomAttributes(ArrayList<String> attributes, Map<String, String> findingAttributesJsonKeyToDisplayNameMap){
+        for(String currentAttribute: this.attributes.keySet())
+            if(!findingAttributesJsonKeyToDisplayNameMap.keySet().contains(currentAttribute) && !attributes.contains(currentAttribute))
+                this.setAttribute(currentAttribute, false);
+        for(String attr: attributes)
+            this.setAttribute(attr, true);
     }
 }

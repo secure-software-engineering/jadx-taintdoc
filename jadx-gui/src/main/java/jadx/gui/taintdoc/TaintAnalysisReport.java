@@ -162,6 +162,7 @@ public class TaintAnalysisReport {
             currentFinding.setSourceTargetNo(reportDialog.getSourceTargetNo());
             currentFinding.setSinkTargetName(reportDialog.getSinkTargetName());
             currentFinding.setSinkTargetNo(reportDialog.getSinkTargetNo());
+            currentFinding.setCustomAttributes(reportDialog.getCustomAttributes(), findingAttributesJsonKeyToDisplayNameMap);
             currentFinding.removeAllHighlights();
             currentFindingIndex = index;
             currentFinding = findings.get(currentFindingIndex);
@@ -177,6 +178,7 @@ public class TaintAnalysisReport {
             reportDialog.updateSourceTargetNo(currentFinding.getSourceTargetNo());
             reportDialog.updateSinkTargetName(currentFinding.getSinkTargetName());
             reportDialog.updateSinkTargetNo(currentFinding.getSinkTargetNo());
+            reportDialog.setCustomAttributes(currentFinding.getAttributes(), findingAttributesJsonKeyToDisplayNameMap);
         }
         else{
             reportDialog.updateFindings(findings);
@@ -200,6 +202,7 @@ public class TaintAnalysisReport {
         String description = this.reportDialog.getDescription();
         if(currentFinding != null)
                 currentFinding.setDescription(description);
+        reportDialog.clearCustomAttributes();
         TaintAnalysisFinding finding = new TaintAnalysisFinding();
         currentFindingIndex = findings.size();
         findings.add(findings.size(), finding);
@@ -230,9 +233,14 @@ public class TaintAnalysisReport {
     }
 
     public void serializeToJson(){
-        String description= this.reportDialog.getDescription();
-        if(currentFinding!=null)
-            currentFinding.setDescription(description);
+        if(currentFinding != null) {
+            currentFinding.setDescription(reportDialog.getDescription());
+            currentFinding.setSourceTargetName(reportDialog.getSourceTargetName());
+            currentFinding.setSourceTargetNo(reportDialog.getSourceTargetNo());
+            currentFinding.setSinkTargetName(reportDialog.getSinkTargetName());
+            currentFinding.setSinkTargetNo(reportDialog.getSinkTargetNo());
+            currentFinding.setCustomAttributes(reportDialog.getCustomAttributes(), findingAttributesJsonKeyToDisplayNameMap);
+        }
         String json = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(this);
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setAcceptAllFileFilterUsed(false);
@@ -320,5 +328,4 @@ public class TaintAnalysisReport {
         if(currentFinding != null)
             currentFinding.setAttribute(key, value);
     }
-
 }
