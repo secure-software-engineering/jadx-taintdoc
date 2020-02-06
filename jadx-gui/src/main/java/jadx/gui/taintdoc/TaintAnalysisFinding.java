@@ -1,6 +1,7 @@
 package jadx.gui.taintdoc;
 
 import jadx.gui.ui.codearea.MarkedLocation;
+import jadx.gui.ui.codearea.MarkedLocationWithTarget;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,8 +11,8 @@ import java.util.Date;
 
 
 public class TaintAnalysisFinding {
-    private MarkedLocation source;
-    private MarkedLocation sink;
+    private MarkedLocationWithTarget source;
+    private MarkedLocationWithTarget sink;
     private ArrayList<MarkedLocation> intermediateFlows;
     private String description;
 
@@ -45,22 +46,22 @@ public class TaintAnalysisFinding {
         return false;
     }
 
-    public final MarkedLocation getSource(){
+    public final MarkedLocationWithTarget getSource(){
         return source;
     }
 
-    public final MarkedLocation getSink(){
+    public final MarkedLocationWithTarget getSink(){
         return sink;
     }
 
     public final ArrayList<MarkedLocation> getIntermediateFlows() { return intermediateFlows; }
 
-    public void setSource(MarkedLocation source){
+    public void setSource(MarkedLocationWithTarget source){
         assert(this.source == null);
         this.source = source;
     }
 
-    public void setSink(MarkedLocation sink){
+    public void setSink(MarkedLocationWithTarget sink){
         assert(this.sink == null);
         this.sink = sink;
     }

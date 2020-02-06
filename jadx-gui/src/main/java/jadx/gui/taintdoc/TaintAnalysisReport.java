@@ -5,6 +5,7 @@ import jadx.gui.treemodel.JNode;
 import jadx.gui.ui.ReportDialog;
 import jadx.gui.ui.codearea.CodeArea;
 import jadx.gui.ui.codearea.MarkedLocation;
+import jadx.gui.ui.codearea.MarkedLocationWithTarget;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -86,7 +87,7 @@ public class TaintAnalysisReport {
      */
     public void markSource(CodeArea codeArea){
         assert(currentFindingIndex >= 0 && currentFinding != null);
-        MarkedLocation markedLocation = new MarkedLocation(codeArea, sourceColor);
+        MarkedLocationWithTarget markedLocation = new MarkedLocationWithTarget(codeArea, sourceColor);
         //if location is marked otherwise, remove the old mark
         if(currentFinding.containsIntermediateFlow(markedLocation))
             markIntermediate(codeArea);
@@ -110,7 +111,7 @@ public class TaintAnalysisReport {
      */
     public void markSink(CodeArea codeArea){
         assert(currentFindingIndex >= 0 && currentFinding != null);
-        MarkedLocation markedLocation = new MarkedLocation(codeArea, sinkColor);
+        MarkedLocationWithTarget markedLocation = new MarkedLocationWithTarget(codeArea, sinkColor);
         //if location is marked otherwise, remove the old mark
         if(currentFinding.containsIntermediateFlow(markedLocation))
             markIntermediate(codeArea);

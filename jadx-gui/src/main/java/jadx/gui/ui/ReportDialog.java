@@ -3,6 +3,7 @@ package jadx.gui.ui;
 import jadx.gui.taintdoc.TaintAnalysisFinding;
 import jadx.gui.taintdoc.TaintAnalysisReport;
 import jadx.gui.ui.codearea.MarkedLocation;
+import jadx.gui.ui.codearea.MarkedLocationWithTarget;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -266,7 +267,7 @@ public class ReportDialog extends JDialog {
         inUpdate = false;
     }
 
-    public void updateMarkedSource(MarkedLocation source){
+    public void updateMarkedSource(MarkedLocationWithTarget source){
         if(source != null)
             markedSourceText.setText(source.toString());
         else
@@ -286,7 +287,7 @@ public class ReportDialog extends JDialog {
         }
     }
 
-    public void updateMarkedSink(MarkedLocation sink){
+    public void updateMarkedSink(MarkedLocationWithTarget sink){
         if(sink != null)
             markedSinkText.setText(sink.toString());
         else

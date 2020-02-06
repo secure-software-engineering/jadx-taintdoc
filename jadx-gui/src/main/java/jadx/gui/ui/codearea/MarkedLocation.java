@@ -15,16 +15,12 @@ public class MarkedLocation {
     private String methodName;
     private String className;
     private Integer lineNo;
-    private String targetName;
-    private Integer targetNo;
     private transient Integer creationCaretLine;
     private transient Object highlightTag;
 
     public MarkedLocation(CodeArea codeArea, Color markColor){
         this.codeArea = codeArea;
         this.markColor = markColor;
-        this.targetName = "";
-        this.targetNo = 1;
 
         int caretLine = codeArea.getCaretLineNumber() + 1;
         lineNo = codeArea.getSourceLine(caretLine);
@@ -118,19 +114,4 @@ public class MarkedLocation {
             this.codeArea = codeArea;
     }
 
-    public String getTargetName() {
-        return targetName;
-    }
-
-    public Integer getTargetNo() {
-        return targetNo;
-    }
-
-    public void setTargetName(String targetName) {
-        this.targetName = targetName;
-    }
-
-    public void setTargetNo(Integer targetNo) {
-        this.targetNo = targetNo;
-    }
 }
