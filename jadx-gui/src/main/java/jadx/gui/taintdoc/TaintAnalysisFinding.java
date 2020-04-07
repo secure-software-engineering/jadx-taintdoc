@@ -1,13 +1,17 @@
 package jadx.gui.taintdoc;
 
+import com.sun.javafx.webkit.KeyCodeMap;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import jadx.gui.ui.codearea.MarkedLocation;
 import jadx.gui.ui.codearea.MarkedLocationWithTarget;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 
 public class TaintAnalysisFinding {
@@ -15,12 +19,14 @@ public class TaintAnalysisFinding {
     private MarkedLocationWithTarget sink;
     private ArrayList<MarkedLocation> intermediateFlows;
     private String description;
+    private boolean isNegative;
 
     private Map<String, Boolean> attributes;
 
     public TaintAnalysisFinding(){
         intermediateFlows = new ArrayList<MarkedLocation>();
         attributes = new TreeMap<>();
+        isNegative = false;
     }
 
     public void removeSource(){
@@ -174,5 +180,22 @@ public class TaintAnalysisFinding {
                 this.setAttribute(currentAttribute, false);
         for(String attr: attributes)
             this.setAttribute(attr, true);
+    }
+
+    public boolean isNegativeFlow() {
+        return this.isNegative;
+    }
+
+    public void setIsNegative(boolean logNegativeFlow) {
+        this.isNegative=logNegativeFlow;
+    }
+
+    public void clearUnrelatedElements() {
+        if(isNegative) {
+            this.attributes.clear();
+            this.intermediateFlows.clear();
+        }
+       this.attributes=this.attributes.entrySet().stream().
+               filter(x->x.getValue()).collect(Collectors.toMap(e->e.getKey(),e->e.getValue()));
     }
 }

@@ -218,7 +218,7 @@ public final class JavaClass implements JavaNode {
 		MethodNode closestMethod = null;
 		for(MethodNode m: cls.getMethods()) {
 			int diff = decompiledLine - m.getDecompiledLine();
-			if (diff > 0 && diff < lastDiff) {
+			if (diff >= 0 && diff < lastDiff) {
 				lastDiff = diff;
 				closestMethod = m;
 			}
@@ -227,7 +227,7 @@ public final class JavaClass implements JavaNode {
 		for(ClassNode c: cls.getInnerClasses()){
 			for(MethodNode m: c.getMethods()) {
 				int diff = decompiledLine - m.getDecompiledLine();
-				if (diff > 0 && diff < lastDiff) {
+				if (diff >= 0 && diff < lastDiff) {
 					lastDiff = diff;
 					closestMethod = m;
 				}

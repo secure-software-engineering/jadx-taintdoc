@@ -1,6 +1,8 @@
 package jadx.gui.taintdoc;
 
 import com.google.gson.GsonBuilder;
+import com.sun.org.apache.xpath.internal.operations.Neg;
+import io.reactivex.internal.util.ArrayListSupplier;
 import jadx.gui.treemodel.JNode;
 import jadx.gui.ui.ReportDialog;
 import jadx.gui.ui.codearea.CodeArea;
@@ -86,23 +88,25 @@ public class TaintAnalysisReport {
      * source.
      */
     public void markSource(CodeArea codeArea){
-        assert(currentFindingIndex >= 0 && currentFinding != null);
-        MarkedLocationWithTarget markedLocation = new MarkedLocationWithTarget(codeArea, sourceColor);
-        //if location is marked otherwise, remove the old mark
-        if(currentFinding.containsIntermediateFlow(markedLocation))
-            markIntermediate(codeArea);
-        if(currentFinding.getSink() != null && currentFinding.getSink().equals(markedLocation))
-            markSink(codeArea);
-        if(currentFinding.getSource() != null && currentFinding.getSource().equals(markedLocation)) {
-            currentFinding.getSource().removeHighlight();
-            currentFinding.removeSource();
-        } else {
-            currentFinding.removeSource();
-            currentFinding.setSource(markedLocation);
-            markedLocation.showHighlight();
+        if(currentFinding!=null) {
+            assert (currentFindingIndex >= 0 && currentFinding != null);
+            MarkedLocationWithTarget markedLocation = new MarkedLocationWithTarget(codeArea, sourceColor);
+            //if location is marked otherwise, remove the old mark
+            if (currentFinding.containsIntermediateFlow(markedLocation))
+                markIntermediate(codeArea);
+            if (currentFinding.getSink() != null && currentFinding.getSink().equals(markedLocation))
+                markSink(codeArea);
+            if (currentFinding.getSource() != null && currentFinding.getSource().equals(markedLocation)) {
+                currentFinding.getSource().removeHighlight();
+                currentFinding.removeSource();
+            } else {
+                currentFinding.removeSource();
+                currentFinding.setSource(markedLocation);
+                markedLocation.showHighlight();
+            }
+            reportDialog.updateFindings(findings);
+            reportDialog.updateMarkedSource(currentFinding.getSource());
         }
-        reportDialog.updateFindings(findings);
-        reportDialog.updateMarkedSource(currentFinding.getSource());
     }
 
     /**
@@ -110,22 +114,25 @@ public class TaintAnalysisReport {
      * and is toggled to be marked again. Unmarks the old sink line if a different line is toggled to be marked as sink.
      */
     public void markSink(CodeArea codeArea){
-        assert(currentFindingIndex >= 0 && currentFinding != null);
-        MarkedLocationWithTarget markedLocation = new MarkedLocationWithTarget(codeArea, sinkColor);
-        //if location is marked otherwise, remove the old mark
-        if(currentFinding.containsIntermediateFlow(markedLocation))
-            markIntermediate(codeArea);
-        if(currentFinding.getSource() != null && currentFinding.getSource().equals(markedLocation))
-            markSource(codeArea);
-        if(currentFinding.getSink() != null && currentFinding.getSink().equals(markedLocation)) {
-            currentFinding.getSink().removeHighlight();
-            currentFinding.removeSink();
-        } else {
-            currentFinding.removeSink();
-            currentFinding.setSink(markedLocation);
-            markedLocation.showHighlight();
+        if(currentFinding!=null) {
+            assert (currentFindingIndex >= 0 && currentFinding != null);
+            MarkedLocationWithTarget markedLocation = new MarkedLocationWithTarget(codeArea, sinkColor);
+            //if location is marked otherwise, remove the old mark
+            if (currentFinding.containsIntermediateFlow(markedLocation))
+                markIntermediate(codeArea);
+            if (currentFinding.getSource() != null && currentFinding.getSource().equals(markedLocation))
+                markSource(codeArea);
+            if (currentFinding.getSink() != null && currentFinding.getSink().equals(markedLocation)) {
+                currentFinding.getSink().removeHighlight();
+                currentFinding.removeSink();
+            } else {
+                currentFinding.removeSink();
+                currentFinding.setSink(markedLocation);
+                markedLocation.showHighlight();
+            }
+            if (currentFinding.getSink() != null)
+                reportDialog.updateMarkedSink(currentFinding.getSink());
         }
-        reportDialog.updateMarkedSink(currentFinding.getSink());
     }
 
     /**
@@ -133,20 +140,22 @@ public class TaintAnalysisReport {
      * as intermediate and is toggled to be marked again.
      */
     public void markIntermediate(CodeArea codeArea){
-        assert(currentFindingIndex >= 0 && currentFinding != null);
-        MarkedLocation markedLocation = new MarkedLocation(codeArea, intermediateColor);
-        //if location is marked otherwise, remove the old mark
-        if(currentFinding.getSource() != null && currentFinding.getSource().equals(markedLocation))
-            markSource(codeArea);
-        if(currentFinding.getSink() != null && currentFinding.getSink().equals(markedLocation))
-            markSink(codeArea);
-        if(currentFinding.containsIntermediateFlow(markedLocation)){
-            currentFinding.removeIntermediateFlow(markedLocation);
-        } else{
-            currentFinding.addIntermediateFlow(markedLocation);
-            markedLocation.showHighlight();
+        if(currentFinding!=null) {
+            assert (currentFindingIndex >= 0 && currentFinding != null);
+            MarkedLocation markedLocation = new MarkedLocation(codeArea, intermediateColor);
+            //if location is marked otherwise, remove the old mark
+            if (currentFinding.getSource() != null && currentFinding.getSource().equals(markedLocation))
+                markSource(codeArea);
+            if (currentFinding.getSink() != null && currentFinding.getSink().equals(markedLocation))
+                markSink(codeArea);
+            if (currentFinding.containsIntermediateFlow(markedLocation)) {
+                currentFinding.removeIntermediateFlow(markedLocation);
+            } else {
+                currentFinding.addIntermediateFlow(markedLocation);
+                markedLocation.showHighlight();
+            }
+            reportDialog.updateMarkedIntermediates(currentFinding.getIntermediateFlows());
         }
-        reportDialog.updateMarkedIntermediates(currentFinding.getIntermediateFlows());
     }
 
     public void selectCurrentFinding(int index, boolean updateReportDialog){
@@ -170,6 +179,7 @@ public class TaintAnalysisReport {
             currentFinding.showAllHighlights();
             if (updateReportDialog)
                 reportDialog.selectCurrentFinding(index);
+            reportDialog.updateLogNegativeFlow(currentFinding.isNegativeFlow());
             reportDialog.updateMarkedSource(currentFinding.getSource());
             reportDialog.updateMarkedIntermediates(currentFinding.getIntermediateFlows());
             reportDialog.updateMarkedSink(currentFinding.getSink());
@@ -183,6 +193,7 @@ public class TaintAnalysisReport {
         }
         else{
             reportDialog.updateFindings(findings);
+            reportDialog.updateLogNegativeFlow(false);
             reportDialog.updateMarkedSource(null);
             reportDialog.updateMarkedIntermediates(null);
             reportDialog.updateMarkedSink(null);
@@ -200,10 +211,7 @@ public class TaintAnalysisReport {
     }
 
     public void createAndSwitchToNewFinding(){
-        String description = this.reportDialog.getDescription();
-        if(currentFinding != null)
-                currentFinding.setDescription(description);
-        reportDialog.clearCustomAttributes();
+        reportDialog.clearEverything();
         TaintAnalysisFinding finding = new TaintAnalysisFinding();
         currentFindingIndex = findings.size();
         findings.add(findings.size(), finding);
@@ -211,6 +219,7 @@ public class TaintAnalysisReport {
             currentFinding.removeAllHighlights();
         currentFinding = finding;
         reportDialog.updateFindings(findings);
+        reportDialog.updateAttributes(currentFinding.getAttributes());
         selectCurrentFinding(currentFindingIndex, true);
     }
 
@@ -241,7 +250,11 @@ public class TaintAnalysisReport {
             currentFinding.setSinkTargetName(reportDialog.getSinkTargetName());
             currentFinding.setSinkTargetNo(reportDialog.getSinkTargetNo());
             currentFinding.setCustomAttributes(reportDialog.getCustomAttributes(), findingAttributesJsonKeyToDisplayNameMap);
+            currentFinding.setIsNegative(reportDialog.getLogNegativeFlow());
+            currentFinding.clearUnrelatedElements();
         }
+        for( TaintAnalysisFinding finding: findings)
+            finding.clearUnrelatedElements();
         String json = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(this);
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setAcceptAllFileFilterUsed(false);

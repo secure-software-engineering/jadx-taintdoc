@@ -29,9 +29,11 @@ public class ReportDialog extends JDialog {
     private Map<JCheckBox, String> findingCheckboxAttributesMap;
     private final JTextArea description;
     private final JTextArea customAttributes;
+    private final JCheckBox logNegativeFlowBox;
 
     public ReportDialog(){
         findingComboBox = new JComboBox<>();
+        logNegativeFlowBox=new JCheckBox();
         markedSourceText = new JTextField();
         markedSourceTargetNameText = new JTextField();
         markedSourceTargetNoText = new JTextField();
@@ -201,40 +203,43 @@ public class ReportDialog extends JDialog {
         constraints.anchor = GridBagConstraints.FIRST_LINE_START;
         centerPanel.add(new JLabel("Findings: "), constraints);
         constraints.gridy = 1;
-        centerPanel.add(new JLabel("Source: "), constraints);
+        centerPanel.add(new JLabel("Log Negative Flow:"), constraints);
         constraints.gridy = 2;
-        centerPanel.add(new JLabel("Target Name: "), constraints);
+        centerPanel.add(new JLabel("Source: "), constraints);
         constraints.gridy = 3;
-        centerPanel.add(new JLabel("Target No: "), constraints);
-        constraints.gridy = 4;
-        centerPanel.add(new JLabel("Intermediates: "), constraints);
-        constraints.gridy = 5;
-        centerPanel.add(new JLabel("Sink: "), constraints);
-        constraints.gridy = 6;
         centerPanel.add(new JLabel("Target Name: "), constraints);
-        constraints.gridy = 7;
+        constraints.gridy = 4;
         centerPanel.add(new JLabel("Target No: "), constraints);
+        constraints.gridy = 5;
+        centerPanel.add(new JLabel("Intermediates: "), constraints);
+        constraints.gridy = 6;
+        centerPanel.add(new JLabel("Sink: "), constraints);
+        constraints.gridy = 7;
+        centerPanel.add(new JLabel("Target Name: "), constraints);
         constraints.gridy = 8;
+        centerPanel.add(new JLabel("Target No: "), constraints);
+        constraints.gridy = 9;
         centerPanel.add(new JLabel("Description: "), constraints);
-
         constraints.gridx = 1;
         constraints.gridy = 0;
         centerPanel.add(findingComboBox, constraints);
         constraints.gridy = 1;
-        centerPanel.add(markedSourceText, constraints);
+        centerPanel.add(logNegativeFlowBox, constraints);
         constraints.gridy = 2;
-        centerPanel.add(markedSourceTargetNameText, constraints);
+        centerPanel.add(markedSourceText, constraints);
         constraints.gridy = 3;
-        centerPanel.add(markedSourceTargetNoText, constraints);
+        centerPanel.add(markedSourceTargetNameText, constraints);
         constraints.gridy = 4;
-        centerPanel.add(listScroller, constraints);
+        centerPanel.add(markedSourceTargetNoText, constraints);
         constraints.gridy = 5;
-        centerPanel.add(markedSinkText, constraints);
+        centerPanel.add(listScroller, constraints);
         constraints.gridy = 6;
-        centerPanel.add(markedSinkTargetNameText, constraints);
+        centerPanel.add(markedSinkText, constraints);
         constraints.gridy = 7;
-        centerPanel.add(markedSinkTargetNoText, constraints);
+        centerPanel.add(markedSinkTargetNameText, constraints);
         constraints.gridy = 8;
+        centerPanel.add(markedSinkTargetNoText, constraints);
+        constraints.gridy = 9;
         centerPanel.add(descriptionScrollPane, constraints);
 
         JPanel attributesPanel = new JPanel();
@@ -265,6 +270,9 @@ public class ReportDialog extends JDialog {
             selectedIndex = findingComboBox.getItemCount() - 1;
         findingComboBox.setSelectedIndex(selectedIndex);
         inUpdate = false;
+    }
+    public void updateLogNegativeFlow(boolean negativeFlow) {
+        logNegativeFlowBox.setSelected(negativeFlow);
     }
 
     public void updateMarkedSource(MarkedLocationWithTarget source){
@@ -379,7 +387,21 @@ public class ReportDialog extends JDialog {
         customAttributes.setText(sb.toString());
     }
 
-    public void clearCustomAttributes(){
+    public void clearEverything()
+    {
+        logNegativeFlowBox.setSelected(false);
+        markedSourceText.setText("");
+        markedSourceTargetNameText.setText("");
+        markedSourceTargetNoText.setText("1");
+        markedSinkText.setText("");
+        markedSinkTargetNameText.setText("");
+        markedSinkTargetNoText.setText("1");
+        description.setText("");
         customAttributes.setText("");
+        intermediatesListModel.clear();
+    }
+
+    public boolean getLogNegativeFlow() {
+        return logNegativeFlowBox.isSelected();
     }
 }
