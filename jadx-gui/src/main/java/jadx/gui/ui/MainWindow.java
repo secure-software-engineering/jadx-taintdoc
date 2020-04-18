@@ -185,6 +185,7 @@ public class MainWindow extends JFrame {
 		settings.addRecentFile(file.getAbsolutePath());
 		initTree();
 		setTitle(DEFAULT_TITLE + " - " + file.getName());
+		TaintAnalysisReport.getInstance().reset();
 		TaintAnalysisReport.getInstance().setFileName(file.getName());
 		runBackgroundJobs();
 	}
@@ -647,6 +648,7 @@ public class MainWindow extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e){
 			TaintAnalysisReport.getInstance().serializeToJson();
+			TaintAnalysisReport.getInstance().reset();
 		}
 	}
 
