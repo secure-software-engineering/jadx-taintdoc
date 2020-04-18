@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -210,7 +211,21 @@ public class TaintAnalysisReport {
         selectCurrentFinding((currentFindingIndex - 1 + findings.size()) % findings.size(), updateReportDialog);
     }
 
+    public void updateCurrentFinding()
+    {
+        if(currentFinding!=null) {
+            currentFinding.setDescription(reportDialog.getDescription());
+            currentFinding.setSourceTargetName(reportDialog.getSourceTargetName());
+            currentFinding.setSourceTargetNo(reportDialog.getSourceTargetNo());
+            currentFinding.setSinkTargetName(reportDialog.getSinkTargetName());
+            currentFinding.setSinkTargetNo(reportDialog.getSinkTargetNo());
+            currentFinding.setCustomAttributes(reportDialog.getCustomAttributes(), findingAttributesJsonKeyToDisplayNameMap);
+            currentFinding.setIsNegative(reportDialog.getLogNegativeFlow());
+            currentFinding.clearUnrelatedElements();
+        }
+    }
     public void createAndSwitchToNewFinding(){
+        updateCurrentFinding();
         reportDialog.clearEverything();
         TaintAnalysisFinding finding = new TaintAnalysisFinding();
         currentFindingIndex = findings.size();
@@ -244,17 +259,15 @@ public class TaintAnalysisReport {
 
     public void serializeToJson(){
         if(currentFinding != null) {
-            currentFinding.setDescription(reportDialog.getDescription());
-            currentFinding.setSourceTargetName(reportDialog.getSourceTargetName());
-            currentFinding.setSourceTargetNo(reportDialog.getSourceTargetNo());
-            currentFinding.setSinkTargetName(reportDialog.getSinkTargetName());
-            currentFinding.setSinkTargetNo(reportDialog.getSinkTargetNo());
-            currentFinding.setCustomAttributes(reportDialog.getCustomAttributes(), findingAttributesJsonKeyToDisplayNameMap);
-            currentFinding.setIsNegative(reportDialog.getLogNegativeFlow());
-            currentFinding.clearUnrelatedElements();
+            updateCurrentFinding();
         }
-        for( TaintAnalysisFinding finding: findings)
+        List<TaintAnalysisFinding> toRemoved =new ArrayList<>();
+        for( TaintAnalysisFinding finding: findings) {
+            if (finding.getSink()==null||finding.getSource()==null)
+                toRemoved.add(finding);//remove wrongly logged finding.
             finding.clearUnrelatedElements();
+        }
+        findings.removeAll(toRemoved);
         String json = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(this);
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setAcceptAllFileFilterUsed(false);
@@ -341,5 +354,17 @@ public class TaintAnalysisReport {
     public void setAttributeOfCurrent(String key, boolean value){
         if(currentFinding != null)
             currentFinding.setAttribute(key, value);
+    }
+
+    public void setLogNegativeFlow(boolean value)
+    {
+         if(currentFinding!=null)
+             currentFinding.setIsNegative(value);
+    }
+
+    public void reset() {
+        findings.clear();
+        currentFinding=null;
+        currentFindingIndex = -1;
     }
 }
