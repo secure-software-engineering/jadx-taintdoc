@@ -1,4 +1,4 @@
-## JADX
+## TB-Extractor (JADX Extension Created within the [TaintBench](https://taintbench.github.io/) Project)
 
 [![Build Status](https://travis-ci.org/skylot/jadx.png?branch=master)](https://travis-ci.org/skylot/jadx)
 [![Code Coverage](https://codecov.io/gh/skylot/jadx/branch/master/graph/badge.svg)](https://codecov.io/gh/skylot/jadx)
