@@ -13,7 +13,7 @@ Command line and GUI tools for produce Java source code from Android Dex and Apk
 ![jadx-gui screenshot](https://i.imgur.com/h917IBZ.png)
 
 ### Manual Analysis Taint Flow Documentation
-Short Tutorial Video: https://www.youtube.com/watch?v=rTLNIGXELS0
+Short **tutorial video**: https://www.youtube.com/watch?v=rTLNIGXELS0
 
 Shortcuts in main window:
 
